@@ -54,7 +54,7 @@ export function buildStudySummary(
       headline: spaces.length === 0 ? "Create your first study space" : "No cards due right now",
       description:
         spaces.length === 0
-          ? "Start with a space, then import or generate cards to build your review queue."
+          ? "Start with a space, then import or create cards to build your review queue."
           : `${formatCount(totalCards, "card")} across ${formatCount(spaces.length, "space")}. Everything currently scheduled has been reviewed.`,
       breakdown: largestSpaces,
       primaryActionLabel: spaces.length === 0 ? "New Space" : "Study all →",
@@ -231,7 +231,7 @@ export function sortCardRecords(cards: CardRecord[]): CardRecord[] {
 
 function buildSpaceDescription(space: SpaceSummary): string {
   if (space.cardCount === 0) {
-    return "No cards in this space yet. Import a deck or generate new material to start scheduling reviews.";
+    return "No cards in this space yet. Import a deck or create cards to start scheduling reviews.";
   }
 
   if (space.dueTodayCount === 0) {

@@ -15,8 +15,7 @@ export function OnboardingQuickStart({ onClick }: OnboardingQuickStartProps) {
         <div className={styles.welcomeQuickstartText}>
           <div className={styles.welcomeQuickstartTitle}>Just explore the app</div>
           <div className={styles.welcomeQuickstartDesc}>
-            Skip setup and head to the dashboard. You can create spaces, import, or generate cards
-            later.
+            Skip setup and head to the dashboard. You can create spaces, import, or add cards later.
           </div>
         </div>
       </div>

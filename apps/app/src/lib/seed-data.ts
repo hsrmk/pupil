@@ -103,10 +103,10 @@ export const FALLBACK_ACTIVITY: ActivityItem[] = [
   {
     id: "fallback-2",
     timeLabel: "1h ago",
-    prefix: "Generated ",
+    prefix: "Added ",
     highlight: "15 cards",
     suffix: " — architectures",
-    typeLabel: "ai gen",
+    typeLabel: "cards",
   },
   {
     id: "fallback-3",
