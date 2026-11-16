@@ -59,7 +59,7 @@ describe("space card views", () => {
       />,
     );
     const switcher = screen.getByRole("group", { name: "Card view" });
-    expect(within(switcher).getByRole("button", { name: "List view" })).toHaveAttribute(
+    expect(within(switcher).getByRole("button", { name: "Grid view" })).toHaveAttribute(
       "aria-pressed",
       "true",
     );

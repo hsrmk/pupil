@@ -87,7 +87,7 @@ export function SpaceDetailsScreen({
   const [renameError, setRenameError] = useState<string | null>(null);
   const [renameName, setRenameName] = useState(space.name);
   const [searchQuery, setSearchQuery] = useState("");
-  const [cardView, setCardView] = useState<"list" | "grid">("list");
+  const [cardView, setCardView] = useState<"list" | "grid">("grid");
   const [sortMode, setSortMode] = useState<CardSortMode>("due");
   const [currentPage, setCurrentPage] = useState(1);
   const cardListSectionRef = useRef<HTMLElement | null>(null);
