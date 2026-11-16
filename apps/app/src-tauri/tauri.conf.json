@@ -55,6 +55,7 @@
   },
   "bundle": {
     "active": true,
+    "iOS": { "minimumSystemVersion": "15.0" },
     "targets": "all",
     "createUpdaterArtifacts": true,
     "icon": [

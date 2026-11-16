@@ -27,7 +27,7 @@ export function SpaceDetailsTitlebar({
   spaceName,
 }: SpaceDetailsTitlebarProps) {
   return (
-    <div className={styles.titlebar} data-window-drag>
+    <div className={`${styles.titlebar} ${styles.spaceTitlebar}`} data-window-drag>
       <div className={styles.titlebarLeft}>
         <div className={styles.titlebarLogo}>
           <EyeLogo />

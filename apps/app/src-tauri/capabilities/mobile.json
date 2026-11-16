@@ -1,0 +1,7 @@
+{
+  "identifier": "mobile",
+  "description": "Capabilities used by the mobile Pupil window.",
+  "platforms": ["iOS", "android"],
+  "windows": ["main"],
+  "permissions": ["core:default", "opener:default"]
+}

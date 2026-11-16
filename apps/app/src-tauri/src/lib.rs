@@ -14,7 +14,14 @@ mod spaces;
 mod study_queue;
 #[cfg(test)]
 mod tests;
+#[cfg(desktop)]
 mod tray;
+#[cfg(mobile)]
+mod tray {
+    pub(crate) fn refresh_tray(_: &tauri::AppHandle) -> crate::error::AppResult<()> {
+        Ok(())
+    }
+}
 mod types;
 mod util;
 mod widget;
@@ -22,12 +29,14 @@ mod widget;
 use std::fs;
 use std::sync::OnceLock;
 
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, desktop))]
 use tauri::Emitter;
 use tauri::Manager;
 use tracing_appender::non_blocking::WorkerGuard;
 
-use crate::app::{build_app_menu, database_path, run_migrations, BootstrapStatus};
+#[cfg(desktop)]
+use crate::app::build_app_menu;
+use crate::app::{database_path, run_migrations, BootstrapStatus};
 use crate::commands::{
     create_card, create_space, delete_card, delete_space, export_database_copy,
     export_review_logs_csv, get_bootstrap_state, get_dashboard_stats, get_settings_data_summary,
@@ -37,7 +46,7 @@ use crate::commands::{
     update_card,
 };
 use crate::commands::{load_card_image, save_card_image};
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, desktop))]
 use crate::constants::{
     DEVELOPER_OPEN_DEVTOOLS_MENU_ID, DEVELOPER_RESET_ONBOARDING_EVENT,
     DEVELOPER_RESET_ONBOARDING_MENU_ID,
@@ -98,18 +107,21 @@ fn init_logging(app: &tauri::AppHandle) -> Result<LoggingState, AppError> {
 
 /// Builds and runs the Tauri application with all plugins, commands, logging,
 /// and database bootstrap wired in one place.
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     #[cfg(feature = "mcp-bridge")]
     let mcp_plugin = tauri_plugin_mcp_bridge::Builder::new()
         .bind_address("127.0.0.1")
         .build();
 
-    let builder = tauri::Builder::default().menu(build_app_menu);
+    let builder = tauri::Builder::default();
+    #[cfg(desktop)]
+    let builder = builder.menu(build_app_menu);
 
     #[cfg(feature = "mcp-bridge")]
     let builder = builder.plugin(mcp_plugin);
 
-    #[cfg(debug_assertions)]
+    #[cfg(all(debug_assertions, desktop))]
     let builder = builder.on_menu_event(|app, event| {
         if event.id().as_ref() == DEVELOPER_OPEN_DEVTOOLS_MENU_ID {
             if let Some(webview) = app.get_webview_window("main") {
@@ -146,6 +158,7 @@ pub fn run() {
                 widget::publish(&connection);
             }
             app.manage(BootstrapStatus { backup_created });
+            #[cfg(desktop)]
             tray::setup_tray(app.handle())?;
             if let Err(error) = tray::refresh_tray(app.handle()) {
                 tracing::warn!("failed to refresh tray during startup: {error}");

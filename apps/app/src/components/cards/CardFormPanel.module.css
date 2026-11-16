@@ -813,7 +813,7 @@
   }
 
   .newCardHead {
-    padding-top: var(--space-5);
+    padding-top: calc(var(--space-5) + env(safe-area-inset-top));
   }
 
   .newCardStickyTop {
@@ -834,10 +834,6 @@
   .newCardDiscardBtn,
   .newCardSaveBtn {
     flex: 1;
-  }
-
-  .newCardMakeAnotherLabel {
-    display: none;
   }
 
   .newCardToolbar {

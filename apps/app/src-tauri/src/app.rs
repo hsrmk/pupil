@@ -3,14 +3,15 @@ use std::path::{Path, PathBuf};
 use std::time::Duration;
 
 use rusqlite::Connection;
+#[cfg(desktop)]
 use tauri::menu::{MenuBuilder, SubmenuBuilder};
 use tauri::path::BaseDirectory;
 use tauri::{AppHandle, Manager};
 
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, desktop))]
 use tauri::menu::MenuItemBuilder;
 
-#[cfg(debug_assertions)]
+#[cfg(all(debug_assertions, desktop))]
 use crate::constants::{DEVELOPER_OPEN_DEVTOOLS_MENU_ID, DEVELOPER_RESET_ONBOARDING_MENU_ID};
 use crate::error::AppResult;
 use crate::migration_runner::{
@@ -62,6 +63,7 @@ pub(crate) fn open_connection(path: &Path) -> AppResult<Connection> {
 
 /// Builds the native application menu, including developer-only actions in
 /// debug builds.
+#[cfg(desktop)]
 pub(crate) fn build_app_menu(app: &AppHandle) -> tauri::Result<tauri::menu::Menu<tauri::Wry>> {
     #[cfg(target_os = "macos")]
     let app_menu = Some(

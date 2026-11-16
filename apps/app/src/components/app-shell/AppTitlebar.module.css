@@ -209,4 +209,7 @@
   .createActions { position: fixed; z-index: 9; right: var(--space-4); bottom: calc(90px + env(safe-area-inset-bottom)); flex-direction: column; align-items: flex-end; }
   .createActions button { background: rgba(38, 38, 42, 0.92); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); }
   .titlebarStatus { margin-right: 0; font-size: 10px; padding: 0 var(--space-2); }
+  .spaceTitlebar { flex-wrap: wrap; }
+  .spaceTitlebar .titlebarLeft { flex: 1 1 100%; }
+  .spaceTitlebar .titlebarRight { margin-left: auto; }
 }
