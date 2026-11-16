@@ -811,6 +811,17 @@
     padding: var(--space-4) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));
   }
 
+  .sessionSummaryScreen {
+    justify-content: safe center;
+    overflow-y: auto;
+    padding: calc(var(--space-8) + env(safe-area-inset-top)) var(--space-4)
+      calc(var(--space-8) + env(safe-area-inset-bottom));
+  }
+
+  .sessionSummaryScreen > * {
+    flex-shrink: 0;
+  }
+
   .sessionSummaryActions {
     flex-direction: column;
     width: 100%;
