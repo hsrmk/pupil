@@ -10,7 +10,6 @@
     "core:window:allow-toggle-maximize",
     "opener:default",
     "process:default",
-    "stronghold:default",
     "updater:default"
   ]
 }

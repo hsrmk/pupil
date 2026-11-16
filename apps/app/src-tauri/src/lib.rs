@@ -1,4 +1,3 @@
-mod ai;
 mod analytics;
 mod app;
 mod card_images;
@@ -27,18 +26,14 @@ use tauri::Emitter;
 use tauri::Manager;
 use tracing_appender::non_blocking::WorkerGuard;
 
-use crate::ai::{AiRequestRegistry, StrongholdState};
 use crate::app::{build_app_menu, database_path, run_migrations, BootstrapStatus};
 use crate::commands::{
-    cancel_ai_request, cancel_chatgpt_sign_in, create_card, create_space, delete_card,
-    delete_space, disconnect_chatgpt_account, explain_card, export_database_copy,
-    export_review_logs_csv, generate_cards, get_ai_settings, get_bootstrap_state,
-    get_claude_code_status, get_dashboard_stats, get_settings_data_summary,
-    get_study_queue_snapshot, get_study_settings, import_anki_cards, list_ai_models, list_cards,
-    list_chatgpt_account_models, list_recent_activity, list_space_stats, list_spaces,
-    log_frontend_event, refresh_tray_status, rename_space, reset_all_data, review_card,
-    save_ai_settings, save_study_settings, start_chatgpt_sign_in, suspend_card,
-    test_ai_provider_connection, undo_review_card, update_card,
+    create_card, create_space, delete_card, delete_space, export_database_copy,
+    export_review_logs_csv, get_bootstrap_state, get_dashboard_stats, get_settings_data_summary,
+    get_study_queue_snapshot, get_study_settings, import_anki_cards, list_cards,
+    list_recent_activity, list_space_stats, list_spaces, log_frontend_event,
+    refresh_tray_status, rename_space, reset_all_data, review_card, save_study_settings,
+    suspend_card, undo_review_card, update_card,
 };
 use crate::commands::{load_card_image, save_card_image};
 #[cfg(debug_assertions)]
@@ -109,8 +104,6 @@ pub fn run() {
         .build();
 
     let builder = tauri::Builder::default()
-        .manage(StrongholdState::default())
-        .manage(std::sync::Arc::new(AiRequestRegistry::default()))
         .menu(build_app_menu);
 
     #[cfg(feature = "mcp-bridge")]
@@ -176,18 +169,6 @@ pub fn run() {
             get_dashboard_stats,
             get_study_queue_snapshot,
             list_space_stats,
-            list_ai_models,
-            get_ai_settings,
-            save_ai_settings,
-            test_ai_provider_connection,
-            cancel_ai_request,
-            get_claude_code_status,
-            start_chatgpt_sign_in,
-            cancel_chatgpt_sign_in,
-            disconnect_chatgpt_account,
-            list_chatgpt_account_models,
-            generate_cards,
-            explain_card,
             list_recent_activity,
             get_settings_data_summary,
             export_database_copy,

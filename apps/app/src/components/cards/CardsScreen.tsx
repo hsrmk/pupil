@@ -435,11 +435,6 @@ function buildSourceFilters(cards: CardRecord[]) {
       count: cards.filter((card) => card.source === "manual").length,
     },
     {
-      label: "AI",
-      value: "ai" as const,
-      count: cards.filter((card) => card.source === "ai").length,
-    },
-    {
       label: "Anki",
       value: "anki" as const,
       count: cards.filter((card) => card.source === "anki").length,

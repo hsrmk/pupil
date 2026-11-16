@@ -201,7 +201,7 @@ function stateClassName(state: number): string {
 function formatSource(source: CardRecord["source"]): string {
   switch (source) {
     case "ai":
-      return "AI";
+      return "Existing";
     case "anki":
       return "Anki";
     default:

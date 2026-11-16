@@ -197,107 +197,6 @@ pub(crate) struct SpaceStats {
     pub(crate) space_id: String,
 }
 
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct AiSettingsState {
-    pub(crate) base_url: String,
-    pub(crate) model: String,
-    pub(crate) max_tokens: String,
-    pub(crate) temperature: String,
-    pub(crate) has_api_key: bool,
-    pub(crate) explain_enabled: bool,
-    pub(crate) connection: crate::ai::AiConnectionKind,
-    pub(crate) chatgpt: ChatgptSettingsState,
-    pub(crate) claude_code: ClaudeCodeSettingsState,
-    /// Whether the selected connection is set up enough to try a request.
-    pub(crate) ai_ready: bool,
-}
-
-/// Display state for the ChatGPT connection. Tokens are never part of it.
-#[derive(Serialize, Clone, Debug, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct ChatgptSettingsState {
-    pub(crate) status: String,
-    pub(crate) email: Option<String>,
-    pub(crate) plan_usage: bool,
-    pub(crate) model: String,
-    /// Whether a ChatGPT registration from an earlier sign-in is kept, so
-    /// Settings can offer signing in with a different account instead.
-    pub(crate) saved_account: bool,
-}
-
-#[derive(Serialize, Clone, Debug, PartialEq)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct ClaudeCodeSettingsState {
-    pub(crate) model: String,
-    pub(crate) path: String,
-    pub(crate) ready: bool,
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct SaveAiSettingsInput {
-    pub(crate) api_key: Option<String>,
-    pub(crate) base_url: String,
-    pub(crate) model: String,
-    pub(crate) max_tokens: String,
-    pub(crate) temperature: String,
-    pub(crate) explain_enabled: Option<bool>,
-    #[serde(default)]
-    pub(crate) connection: Option<String>,
-    #[serde(default)]
-    pub(crate) chatgpt_model: Option<String>,
-    #[serde(default)]
-    pub(crate) claude_code_model: Option<String>,
-    #[serde(default)]
-    pub(crate) claude_code_path: Option<String>,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct ChatgptDisconnectResult {
-    /// Whether OpenAI confirmed the sign-in was revoked. Local tokens are
-    /// removed either way.
-    pub(crate) remote_revoked: bool,
-    pub(crate) settings: AiSettingsState,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct AiConnectionTestResult {
-    pub(crate) detail: String,
-    pub(crate) label: String,
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct GenerateCardsInput {
-    pub(crate) topic: String,
-    pub(crate) count: Option<i64>,
-    pub(crate) difficulty: String,
-    pub(crate) style: String,
-    /// Lets the frontend cancel this request with `cancel_ai_request`.
-    #[serde(default)]
-    pub(crate) request_id: Option<String>,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct GeneratedCardPayload {
-    pub(crate) back: String,
-    pub(crate) front: String,
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct ExplainCardInput {
-    pub(crate) card_id: String,
-    pub(crate) force: Option<bool>,
-    /// Lets the frontend cancel this request with `cancel_ai_request`.
-    #[serde(default)]
-    pub(crate) request_id: Option<String>,
-}
-
 /// A log record forwarded from the renderer so frontend failures land in the
 /// same rotating log file as backend ones. Release builds have no devtools, so
 /// without this a user-reported UI bug leaves no trace to ask for.
@@ -307,14 +206,6 @@ pub(crate) struct FrontendLogInput {
     pub(crate) level: String,
     pub(crate) message: String,
     pub(crate) context: Option<String>,
-}
-
-#[derive(Serialize)]
-#[serde(rename_all = "camelCase")]
-pub(crate) struct ExplainCardResult {
-    pub(crate) payload: ExplainCardPayload,
-    pub(crate) generated_at: i64,
-    pub(crate) cached: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -702,35 +593,6 @@ pub(crate) struct StudyQueueSnapshot {
     pub(crate) actionable_due_count: i64,
     pub(crate) gated_new_count: i64,
     pub(crate) overdue_review_count: i64,
-}
-
-pub(crate) struct NormalizedAiSettingsInput {
-    pub(crate) api_key: Option<String>,
-    pub(crate) base_url: String,
-    pub(crate) model: String,
-    pub(crate) max_tokens: i64,
-    pub(crate) temperature: f64,
-    pub(crate) explain_enabled: Option<bool>,
-    pub(crate) connection: Option<crate::ai::AiConnectionKind>,
-    pub(crate) chatgpt_model: Option<String>,
-    pub(crate) claude_code_model: Option<String>,
-    pub(crate) claude_code_path: Option<String>,
-}
-
-#[derive(Clone)]
-pub(crate) struct ResolvedAiSettings {
-    pub(crate) api_key: String,
-    pub(crate) base_url: String,
-    pub(crate) model: String,
-    pub(crate) max_tokens: i64,
-    pub(crate) temperature: f64,
-}
-
-pub(crate) struct NormalizedGenerateCardsInput {
-    pub(crate) topic: String,
-    pub(crate) count: Option<i64>,
-    pub(crate) difficulty: String,
-    pub(crate) style: String,
 }
 
 pub(crate) struct NormalizedCardInput {

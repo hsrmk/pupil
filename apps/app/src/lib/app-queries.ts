@@ -1,5 +1,4 @@
 import { useQuery } from "@tanstack/react-query";
-import { loadAiSettings } from "./ai-settings";
 import { loadBootstrapState } from "./bootstrap";
 import { appQueryKeys } from "./query";
 import { getStorage } from "./storage";

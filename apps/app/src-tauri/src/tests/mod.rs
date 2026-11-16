@@ -1,15 +1,8 @@
-mod ai;
-mod ai_connection;
-mod ai_models;
 mod analytics;
 mod card_images;
 mod cards;
-mod chatgpt;
-mod claude_code;
-mod explain;
 mod imports;
 mod migrations;
-mod mock_http;
 mod normalize;
 mod settings;
 mod spaces;
