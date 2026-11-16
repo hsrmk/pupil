@@ -4,6 +4,10 @@ import { EyeLogo } from "../brand";
 import { PlusIcon } from "../icons/PlusIcon";
 import { SearchIcon } from "../icons/SearchIcon";
 import styles from "./AppTitlebar.module.css";
+import cardsIcon from "./symbols/book.pages.png";
+import dashboardIcon from "./symbols/building.columns.png";
+import settingsIcon from "./symbols/gear.png";
+import importIcon from "./symbols/square.and.arrow.down.png";
 
 export type AppTabId = "dashboard" | "cards" | "import" | "settings";
 
@@ -13,10 +17,10 @@ export type AppTab = {
 };
 
 const tabIcons: Record<AppTabId, string> = {
-  dashboard: "⌂",
-  cards: "▤",
-  import: "↓",
-  settings: "⚙",
+  dashboard: dashboardIcon,
+  cards: cardsIcon,
+  import: importIcon,
+  settings: settingsIcon,
 };
 
 type AppTitlebarProps = {
@@ -102,6 +106,7 @@ export function AppTitlebar({
           {tabs.map((tab) => (
             <button
               aria-current={activeTab === tab.id ? "page" : undefined}
+              aria-label={tab.label}
               className={`${styles.titlebarTab}${activeTab === tab.id ? ` ${styles.active}` : ""}`}
               key={tab.id}
               onClick={() => onSelectTab(tab.id)}
@@ -114,10 +119,15 @@ export function AppTitlebar({
               }}
               type="button"
             >
-              <span aria-hidden="true" className={styles.mobileTabIcon}>
-                {tabIcons[tab.id]}
-              </span>
-              <span>{tab.label}</span>
+              <span
+                aria-hidden="true"
+                className={styles.mobileTabIcon}
+                style={{
+                  maskImage: `url(${tabIcons[tab.id]})`,
+                  WebkitMaskImage: `url(${tabIcons[tab.id]})`,
+                }}
+              />
+              <span className={styles.tabLabel}>{tab.label}</span>
             </button>
           ))}
         </div>
