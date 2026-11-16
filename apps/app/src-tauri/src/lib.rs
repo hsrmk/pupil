@@ -17,6 +17,7 @@ mod tests;
 mod tray;
 mod types;
 mod util;
+mod widget;
 
 use std::fs;
 use std::sync::OnceLock;
@@ -141,6 +142,9 @@ pub fn run() {
             let database_path = database_path(app.handle())?;
             let backup_created = run_migrations(app.handle(), &database_path)?;
 
+            if let Ok(connection) = crate::app::open_app_connection(app.handle()) {
+                widget::publish(&connection);
+            }
             app.manage(BootstrapStatus { backup_created });
             tray::setup_tray(app.handle())?;
             if let Err(error) = tray::refresh_tray(app.handle()) {

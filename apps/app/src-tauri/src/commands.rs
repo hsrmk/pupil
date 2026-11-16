@@ -110,7 +110,9 @@ pub(crate) fn rename_space(
 pub(crate) fn delete_space(app: AppHandle, id: String) -> Result<(), AppError> {
     let connection = open_app_connection(&app)?;
 
-    delete_space_row(&connection, &id).map_err(AppError::from_space_storage)
+    delete_space_row(&connection, &id).map_err(AppError::from_space_storage)?;
+    crate::widget::publish(&connection);
+    Ok(())
 }
 
 #[tauri::command]
@@ -175,7 +177,9 @@ pub(crate) fn review_card(app: AppHandle, input: ReviewCardInput) -> Result<Card
     let mut connection = open_app_connection(&app)?;
     let normalized = normalize_review_card_input(&input).map_err(AppError::validation)?;
 
-    review_card_row(&mut connection, normalized).map_err(AppError::from_card_storage)
+    let card = review_card_row(&mut connection, normalized).map_err(AppError::from_card_storage)?;
+    crate::widget::publish(&connection);
+    Ok(card)
 }
 
 #[tauri::command]
@@ -187,7 +191,10 @@ pub(crate) fn undo_review_card(
     let mut connection = open_app_connection(&app)?;
     let normalized = normalize_undo_review_card_input(&input).map_err(AppError::validation)?;
 
-    undo_review_card_row(&mut connection, normalized).map_err(AppError::from_card_storage)
+    let card =
+        undo_review_card_row(&mut connection, normalized).map_err(AppError::from_card_storage)?;
+    crate::widget::publish(&connection);
+    Ok(card)
 }
 
 #[tauri::command]
@@ -291,7 +298,9 @@ pub(crate) fn export_review_logs_csv(app: AppHandle) -> Result<ExportDataResult,
 pub(crate) fn reset_all_data(app: AppHandle) -> Result<(), AppError> {
     let mut connection = open_app_connection(&app)?;
 
-    reset_all_data_rows(&app, &mut connection)
+    reset_all_data_rows(&app, &mut connection)?;
+    crate::widget::publish(&connection);
+    Ok(())
 }
 
 #[tauri::command]
