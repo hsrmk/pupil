@@ -770,6 +770,22 @@
 }
 
 @media (max-width: 640px) {
+  .sessionBar {
+    height: calc(var(--titlebar-height) + env(safe-area-inset-top));
+    padding: env(safe-area-inset-top) var(--space-4) 0;
+  }
+
+  .sessionExitBtn,
+  .sessionUndoBtn,
+  .sessionOverflowBtn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .sessionProgressTrack {
+    top: calc(var(--titlebar-height) + env(safe-area-inset-top));
+  }
+
   .sessionCardFace {
     min-height: 220px;
     padding: var(--space-9) var(--space-7);
@@ -789,7 +805,10 @@
   }
 
   .sessionArea {
-    padding: var(--space-4) var(--space-4) var(--space-6);
+    top: calc(var(--titlebar-height) + env(safe-area-inset-top) + 2px);
+    overflow-y: auto;
+    justify-content: safe center;
+    padding: var(--space-4) var(--space-4) calc(var(--space-6) + env(safe-area-inset-bottom));
   }
 
   .sessionSummaryActions {
