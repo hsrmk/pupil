@@ -43,7 +43,7 @@ private struct StudyCalendarView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("Study calendar").font(.system(size: 13, weight: .semibold))
+                Text("Anki Calendar").font(.system(size: 13, weight: .semibold))
                 Spacer(minLength: 2)
                 if let snapshot = entry.snapshot {
                     Text("\(currentStreak(snapshot)) day streak")
@@ -60,13 +60,13 @@ private struct StudyCalendarView: View {
                     // title and caption, even when the widget is short.
                     let spacing: CGFloat = 3
                     let cellSize = max(0, min(
-                        (geometry.size.width - 15 * spacing) / 16,
+                        (geometry.size.width - 23 * spacing) / 24,
                         (geometry.size.height - 6 * spacing) / 7
                     ))
-                    let columns = Array(repeating: GridItem(.fixed(cellSize), spacing: spacing), count: 16)
+                    let columns = Array(repeating: GridItem(.fixed(cellSize), spacing: spacing), count: 24)
                     LazyVGrid(columns: columns, spacing: spacing) {
-                        ForEach(0..<112, id: \.self) { index in
-                            let offset = 111 - ((index % 16) * 7 + index / 16)
+                        ForEach(0..<168, id: \.self) { index in
+                            let offset = 167 - ((index % 24) * 7 + index / 24)
                             let day = calendar.date(byAdding: .day, value: -offset, to: today) ?? today
                             let studied = days.contains(formatter.string(from: day))
                             RoundedRectangle(cornerRadius: 2)
@@ -76,12 +76,12 @@ private struct StudyCalendarView: View {
                         }
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
-                    .accessibilityLabel("Study activity over the last 112 days")
+                    .accessibilityLabel("Study activity over the last 168 days")
                 }
-                Text("LAST 16 WEEKS").font(.system(size: 8, weight: .medium, design: .monospaced)).foregroundStyle(.secondary)
+                Text("LAST 24 WEEKS").font(.system(size: 8, weight: .medium, design: .monospaced)).foregroundStyle(.secondary)
             } else {
                 Spacer(minLength: 0)
-                Text("Open Pupil to show your study calendar.")
+                Text("Open Pupil to show your Anki Calendar.")
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                 Spacer(minLength: 0)
             }
@@ -114,7 +114,7 @@ struct StudyCalendarWidget: Widget {
         StaticConfiguration(kind: "com.pupil.study-calendar", provider: StudyProvider()) { entry in
             StudyCalendarView(entry: entry)
         }
-        .configurationDisplayName("Study calendar")
+        .configurationDisplayName("Anki Calendar")
         .description("See your study activity and current streak.")
         .supportedFamilies([.systemMedium])
     }

@@ -17,7 +17,7 @@ export function ActivitySection({ activity, streakCells, streakCount }: Activity
       <div className={styles.bottomGrid}>
         <div className={styles.streakWrap}>
           <div className={styles.streakHeader}>
-            <span className={styles.streakTitle}>Study calendar</span>
+            <span className={styles.streakTitle}>Anki Calendar</span>
             <span className={styles.streakCount}>
               <strong>{streakCount} day</strong> streak
             </span>

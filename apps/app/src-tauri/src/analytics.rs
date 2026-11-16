@@ -47,7 +47,7 @@ pub(crate) fn load_dashboard_stats(
         |row| row.get(0),
     )?;
     let global_streak = load_streak(connection, None)?;
-    let study_days = load_recent_study_days(connection, None, 112)?;
+    let study_days = load_recent_study_days(connection, None, 168)?;
 
     Ok(DashboardStats {
         due_today,
