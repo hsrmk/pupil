@@ -435,12 +435,19 @@ function htmlToPlainText(html: string) {
   const document = new DOMParser().parseFromString(`<div>${normalizedMarkup}</div>`, "text/html");
   const text = document.body.textContent ?? "";
 
-  return text
-    .replace(/\r/g, "")
-    .replace(/\u00a0/g, " ")
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .trim();
+  return (
+    text
+      .replace(/\r/g, "")
+      .replace(/\u00a0/g, " ")
+      // Anki's MathJax delimiters differ from the dollar syntax used by Pupil.
+      .replace(/\\\[([\s\S]*?)\\\]/g, (_match, math: string) => `$$${math}$$`)
+      .replace(/\\\(([\s\S]*?)\\\)/g, (_match, math: string) => `$${math}$`)
+      .replace(/\[\$\$\]([\s\S]*?)\[\/\$\$\]/gi, (_match, math: string) => `$$${math}$$`)
+      .replace(/\[\$\]([\s\S]*?)\[\/\$\]/gi, (_match, math: string) => `$${math}$`)
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim()
+  );
 }
 
 function parseDeckMap(raw: Record<string, unknown>) {

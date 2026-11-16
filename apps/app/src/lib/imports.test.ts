@@ -3,6 +3,7 @@ import initSqlJs from "sql.js";
 import sqlWasmUrl from "sql.js/dist/sql-wasm.wasm?url";
 import { describe, expect, it, vi } from "vitest";
 import { enableTauriRuntime, invokeMock } from "../test/tauri";
+import { renderCardMarkup } from "./card-markup";
 import { listCards } from "./cards";
 import { importApkgFile, readImportHistory } from "./imports";
 import { listSpaces } from "./spaces";
@@ -30,7 +31,7 @@ const historyItem = {
   statusLabel: "complete",
 };
 
-async function createBasicApkg() {
+async function createBasicApkg(front = "Ownership", back = "Rules") {
   const SQL = await initSqlJs({ locateFile: () => sqlWasmUrl.replace(/^\/@fs/, "") });
   const database = new SQL.Database() as unknown as {
     close(): void;
@@ -43,7 +44,8 @@ async function createBasicApkg() {
   database.exec(
     `INSERT INTO col VALUES ('{"1":{"name":"Languages::Rust"}}', '{"1":{"name":"Basic","type":0}}')`,
   );
-  database.exec("INSERT INTO notes VALUES (1, 1, ' rust  systems ', 'Ownership\u001fRules')");
+  const fields = `${front}\u001f${back}`.replace(/'/g, "''");
+  database.exec(`INSERT INTO notes VALUES (1, 1, ' rust  systems ', '${fields}')`);
   database.exec("INSERT INTO cards VALUES (1, 1, 1, 0)");
   const archive = new JSZip();
   archive.file("collection.anki2", database.export());
@@ -73,6 +75,17 @@ describe("import history", () => {
 });
 
 describe("APKG input validation", () => {
+  it("imports Anki MathJax and Mochi-style equations as renderable card text", async () => {
+    vi.spyOn(console, "info").mockImplementation(() => undefined);
+    await importApkgFile(
+      await createBasicApkg("Inline \\(x^2\\) and $y$", "Block \\[\\frac{1}{2}\\]"),
+    );
+    const [card] = await listCards();
+    expect(card.front).toBe("Inline $x^2$ and $y$");
+    expect(card.back).toBe("Block $$\\frac{1}{2}$$");
+    expect(renderCardMarkup(card.front, "cloze")).toContain("katex");
+    expect(renderCardMarkup(card.back, "cloze")).toContain("katex-display");
+  });
   it("reports parsing progress then rejects a non-APKG file without persisting history", async () => {
     const onStageChange = vi.fn();
     vi.spyOn(console, "error").mockImplementation(() => undefined);
