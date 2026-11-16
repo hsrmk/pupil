@@ -114,32 +114,6 @@ export default function Manifesto() {
             <div className={shared.rulerDivider} />
 
             <section className={styles.manifestoSection}>
-              <h2 className={styles.manifestoH2}>Then AI removed the last excuse.</h2>
-              <p>
-                Even when I was consistent, there was one thing that always felt like work: making
-                the cards in the first place. Well, making them is pretty easy these days, but
-                they've all lived in many chat sessions across different providers (Claude and
-                ChatGPT, mostly). I had to copy and paste, reformat, and then review. It was a
-                chore. And truth be told I skipped it 70% of the time.
-              </p>
-              <p>
-                We live in a moment where "AI-powered" has become a marketing checkbox. Every app
-                has a copilot, a chat window, a suggestion engine. Most of them feel bolted on,
-                because they are. But AI can genuinely feel magical — when it's surgical. When it
-                does one specific thing, in exactly the right moment, better than you could do it
-                yourself.
-              </p>
-              <p>
-                In Pupil, AI does one job: it turns a topic you care about into a full deck of
-                cards, instantly. No prompting, no fiddling. You type, it generates, you review and
-                approve. That's the entire surface area. The rest is you and the algorithm. And some
-                delightfully out-of-your-way UX.
-              </p>
-            </section>
-
-            <div className={shared.rulerDivider} />
-
-            <section className={styles.manifestoSection}>
               <h2 className={styles.manifestoH2}>Open source can be genuinely delightful.</h2>
               <p>
                 I wanted to build something for myself. But I also wanted to give it back. Truth be

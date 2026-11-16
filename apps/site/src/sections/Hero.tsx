@@ -23,8 +23,8 @@ export default function Hero() {
             </span>
           </h1>
           <p className={styles.heroDesc}>
-            Pupil generates, organizes, and adapts cards to your knowledge gaps using AI and
-            science-backed spaced repetition. No account needed.
+            Create and organize cards, then study with science-backed spaced repetition. No account
+            needed.
           </p>
           <div className={styles.heroCta}>
             <DownloadCTA onBackdrop />

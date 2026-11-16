@@ -14,8 +14,8 @@ export default function Features() {
       <div className={shared.sectionHead}>
         <h2 className={shared.sectionTitle}>Spaced repetition, without the friction</h2>
         <p className={shared.sectionDesc}>
-          All the rigor of the algorithm. None of the setup. Powered by AI so you can go from topic
-          to drill in seconds.
+          All the rigor of the algorithm, with a simple way to create, organize, and study your
+          cards.
         </p>
       </div>
 

@@ -33,7 +33,7 @@ export const DETAIL_SHOTS: DetailShot[] = [
   {
     title: "Command palette",
     caption:
-      "Search cards, spaces, or actions—study due cards, generate, import, or open settings from one overlay.",
+      "Search cards, spaces, or actions—study due cards, import, or open settings from one overlay.",
     src: commandPaletteScreenshot,
     alt: "Command palette overlay with search field, actions list, and spaces list over the dashboard",
     focus: [0.5, 0.46],

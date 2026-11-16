@@ -5,9 +5,9 @@ export const FEATURE_GROUPS: { name: string; features: Feature[] }[] = [
     name: "Learn",
     features: [
       {
-        title: "AI batch generation",
-        desc: "Type a topic. Get a full deck in seconds. Approve, discard, or regenerate individual cards before they land in your space.",
-        spec: "Topic → deck",
+        title: "Flexible card editor",
+        desc: "Create cards with text, equations, and images, organized in your own spaces.",
+        spec: "Text · math · images",
       },
       {
         title: "FSRS-5 spaced repetition",
@@ -36,7 +36,7 @@ export const FEATURE_GROUPS: { name: string; features: Feature[] }[] = [
       },
       {
         title: "Command palette",
-        desc: "Jump to any space, start a study session, or generate cards — all from the keyboard. No mouse required.",
+        desc: "Jump to any space, start a study session, or import cards — all from the keyboard. No mouse required.",
         spec: "⌘ K",
       },
     ],
