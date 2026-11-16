@@ -5,7 +5,7 @@ import { CardFormPanel } from "./CardFormPanel";
 
 function Editor() {
   const [draft, setDraft] = useState({
-    front: "Question ",
+    front: "1=1 ",
     back: "Answer",
     spaceId: "",
     tagsText: "",
@@ -37,6 +37,7 @@ describe("card images", () => {
     });
     fireEvent.change(input as HTMLInputElement, { target: { files: [png] } });
     await waitFor(() => expect(screen.getAllByAltText("sample")).toHaveLength(2));
+    expect(screen.getAllByAltText("sample")[1].parentElement?.textContent).toContain("1=1");
     expect(screen.getByRole("textbox", { name: "Front" }).textContent).not.toContain(
       "pupil-image:",
     );
