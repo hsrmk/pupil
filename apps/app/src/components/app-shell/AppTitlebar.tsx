@@ -12,6 +12,13 @@ export type AppTab = {
   label: string;
 };
 
+const tabIcons: Record<AppTabId, string> = {
+  dashboard: "⌂",
+  cards: "▤",
+  import: "↓",
+  settings: "⚙",
+};
+
 type AppTitlebarProps = {
   activeTab: AppTabId;
   globalStreak?: number | null;
@@ -107,7 +114,10 @@ export function AppTitlebar({
               }}
               type="button"
             >
-              {tab.label}
+              <span aria-hidden="true" className={styles.mobileTabIcon}>
+                {tabIcons[tab.id]}
+              </span>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
@@ -119,22 +129,24 @@ export function AppTitlebar({
             {updateActionLabel}
           </Button>
         ) : null}
-        {activeTab === "dashboard" && globalStreak !== undefined && globalStreak !== null ? (
+        {globalStreak !== undefined && globalStreak !== null ? (
           <div className={styles.titlebarStatus}>
             <span className="streak-dot" />
             {globalStreak > 0 ? `${globalStreak} day streak` : "No streak yet"}
           </div>
         ) : null}
-        {onOpenNewCard ? (
-          <Button onClick={onOpenNewCard} size="compact" variant="outline">
+        <div className={styles.createActions}>
+          {onOpenNewCard ? (
+            <Button onClick={onOpenNewCard} size="compact" variant="outline">
+              <PlusIcon />
+              New Card
+            </Button>
+          ) : null}
+          <Button onClick={onOpenCreateDialog} size="compact" variant="outline">
             <PlusIcon />
-            New Card
+            New Space
           </Button>
-        ) : null}
-        <Button onClick={onOpenCreateDialog} size="compact" variant="outline">
-          <PlusIcon />
-          New Space
-        </Button>
+        </div>
         <Button aria-label="Search" onClick={onOpenPalette} size="iconCompact" variant="outline">
           <SearchIcon />
         </Button>

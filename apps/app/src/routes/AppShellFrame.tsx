@@ -58,7 +58,7 @@ export function AppShellFrame({
         {activeTab ? (
           <AppTitlebar
             activeTab={activeTab.id}
-            globalStreak={activeTab.id === "dashboard" ? globalStreak : null}
+            globalStreak={globalStreak}
             onInstallUpdate={updateActionLabel ? () => void install() : undefined}
             onOpenCreateDialog={onOpenCreateDialog}
             onOpenNewCard={onOpenNewCard}
