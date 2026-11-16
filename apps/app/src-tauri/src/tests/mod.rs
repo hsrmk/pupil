@@ -2,6 +2,7 @@ mod ai;
 mod ai_connection;
 mod ai_models;
 mod analytics;
+mod card_images;
 mod cards;
 mod chatgpt;
 mod claude_code;

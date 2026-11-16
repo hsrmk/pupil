@@ -16,6 +16,18 @@ describe("escapeHtml", () => {
 });
 
 describe("renderCardMarkup", () => {
+  it("renders only safe, resolved Pupil images and escapes the alt text", () => {
+    const markup = renderCardMarkup('![a "quote"](pupil-image:abc)', "cloze", {
+      abc: "data:image/png;base64,iVBORw==",
+    });
+    expect(markup).toContain('src="data:image/png;base64,iVBORw=="');
+    expect(markup).toContain('alt="a &quot;quote&quot;"');
+    expect(
+      renderCardMarkup("![x](pupil-image:abc)", "cloze", {
+        abc: "data:image/svg+xml;base64,PHN2Zz4=",
+      }),
+    ).not.toContain("<img");
+  });
   it("renders inline and display math alongside Markdown", () => {
     const rendered = renderCardMarkup("**Area:** $A = \\pi r^2$\n$$\\frac{1}{2}$$", "cloze");
     expect(rendered).toContain("<strong>Area:</strong>");

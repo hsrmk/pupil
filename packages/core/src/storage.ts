@@ -76,6 +76,8 @@ export type DeleteSpaceInput = {
  * so scheduling has exactly one definition no matter which backend is active.
  */
 export interface PupilStorage {
+  saveCardImage(base64: string): Promise<string>;
+  loadCardImage(id: string): Promise<string | null>;
   listSpaces(): Promise<SpaceSummary[]>;
   createSpace(input: CreateSpaceInput): Promise<SpaceSummary>;
   renameSpace(input: RenameSpaceInput): Promise<SpaceSummary>;

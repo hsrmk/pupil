@@ -3,6 +3,7 @@ import { buildDueQueue } from "@pupil/core";
 import { type CSSProperties, type SyntheticEvent, useEffect, useRef, useState } from "react";
 import { SpaceDetailsTitlebar } from "../app-shell";
 import { Button } from "../Button";
+import { CardFace } from "../cards/CardFace";
 import { CardFormPanel } from "../cards/CardFormPanel";
 import { CardList } from "../cards/CardList";
 import { CARD_SORT_OPTIONS, type CardSortMode, sortCardsForList } from "../cards/cardSort";
@@ -519,7 +520,7 @@ export function SpaceDetailsScreen({
 
               {recentChanges.map((card) => (
                 <div className={styles.reviewRow} key={`change-${card.id}`}>
-                  <span className={styles.reviewFront}>{card.front}</span>
+                  <CardFace className={styles.reviewFront} value={card.front} />
                   <span className={`${styles.reviewGrade} ${stateClassName(card.state)}`}>
                     {formatState(card.state)}
                   </span>

@@ -92,6 +92,14 @@ bun install
 bun run --cwd apps/app tauri build
 ```
 
+For a local `.app` without the release updater signing key, use:
+
+```bash
+bun run --cwd apps/app tauri build --bundles app --config '{"bundle":{"createUpdaterArtifacts":false}}'
+```
+
+This builds a local app without creating signed updater artifacts. The configured in-app updater still points to the upstream project's releases; forks should configure their own updater or avoid installing upstream updates over a customized build.
+
 ---
 
 ## Development mode

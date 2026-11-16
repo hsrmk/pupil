@@ -325,6 +325,12 @@
   font-weight: 500;
 }
 
+.reviewFront img {
+  max-width: 36px;
+  max-height: 24px;
+  vertical-align: middle;
+}
+
 .reviewGrade {
   font-size: 11px;
   font-weight: 500;

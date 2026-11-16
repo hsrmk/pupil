@@ -1,4 +1,5 @@
 import { renderCardMarkup } from "../../lib/card-markup";
+import { useCardImages } from "../../lib/use-card-images";
 import styles from "./Study.module.css";
 import type { StudyCardRecord } from "./types";
 
@@ -13,6 +14,8 @@ export function StudyReviewCard({
   isAnswerVisible,
   isSuspended = false,
 }: StudyReviewCardProps) {
+  const frontImages = useCardImages(card.front);
+  const backImages = useCardImages(card.back);
   return (
     <div
       className={`${styles.sessionCard}${isAnswerVisible ? ` ${styles.flipped}` : ""}${isSuspended ? ` ${styles.suspended}` : ""}`}
@@ -23,7 +26,9 @@ export function StudyReviewCard({
         <div className={styles.sessionCardContent}>
           <div
             className={styles.sessionCardText}
-            dangerouslySetInnerHTML={{ __html: renderStudyHtml(card.front) }}
+            dangerouslySetInnerHTML={{
+              __html: renderCardMarkup(card.front, "session-cloze-blank", frontImages),
+            }}
           />
         </div>
         {card.tags.length > 0 ? (
@@ -43,11 +48,15 @@ export function StudyReviewCard({
         <div className={styles.sessionCardContent}>
           <div
             className={styles.sessionCardFrontEcho}
-            dangerouslySetInnerHTML={{ __html: renderStudyHtml(card.front) }}
+            dangerouslySetInnerHTML={{
+              __html: renderCardMarkup(card.front, "session-cloze-blank", frontImages),
+            }}
           />
           <div
             className={styles.sessionCardText}
-            dangerouslySetInnerHTML={{ __html: renderStudyHtml(card.back) }}
+            dangerouslySetInnerHTML={{
+              __html: renderCardMarkup(card.back, "session-cloze-blank", backImages),
+            }}
           />
         </div>
         {card.tags.length > 0 ? (
@@ -62,8 +71,4 @@ export function StudyReviewCard({
       </div>
     </div>
   );
-}
-
-function renderStudyHtml(value: string): string {
-  return renderCardMarkup(value, "session-cloze-blank");
 }

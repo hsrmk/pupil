@@ -209,6 +209,7 @@ pub(crate) fn reset_all_data_rows(app: &AppHandle, connection: &mut Connection) 
         DELETE FROM review_logs;
         DELETE FROM study_days;
         DELETE FROM cards;
+        DELETE FROM card_images;
         DELETE FROM spaces;
         DELETE FROM settings;
         ",

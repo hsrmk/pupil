@@ -263,6 +263,21 @@
   word-break: break-word;
 }
 
+.sessionCardText img,
+.sessionCardFrontEcho img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+}
+
+.sessionCardText :global(.katex-display),
+.sessionCardFrontEcho :global(.katex-display) {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .sessionCardText strong {
   font-weight: 700;
 }

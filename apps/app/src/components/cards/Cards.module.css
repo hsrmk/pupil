@@ -294,6 +294,23 @@
   letter-spacing: -0.1px;
 }
 
+.cardFront img {
+  max-width: 36px;
+  max-height: 24px;
+  vertical-align: middle;
+}
+
+.cardQaText img {
+  display: block;
+  max-width: 100%;
+  max-height: 180px;
+  object-fit: contain;
+}
+
+.cardQaText :global(.katex-display) {
+  overflow-x: auto;
+}
+
 .cardSpace {
   overflow: hidden;
   color: var(--text-secondary);

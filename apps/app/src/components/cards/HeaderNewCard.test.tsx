@@ -88,9 +88,9 @@ describe("header card creation", () => {
     };
     const { rerender } = render(<CardsScreen {...props} />);
     await user.click(screen.getByRole("button", { name: "New Card" }));
-    const front = screen.getByPlaceholderText("A clear, single question or prompt...");
+    const front = screen.getByRole("textbox", { name: "Front" });
     await user.type(front, "Keep this draft");
     rerender(<CardsScreen {...props} newCardRequested onNewCardRequestHandled={vi.fn()} />);
-    expect(front).toHaveValue("Keep this draft");
+    expect(front).toHaveTextContent("Keep this draft");
   });
 });

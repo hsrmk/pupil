@@ -42,4 +42,9 @@ pub(crate) const MIGRATIONS: &[Migration] = &[
         requires_backup: false,
         action: MigrationAction::Sql(include_str!("../migrations/0007_add_ai_connection.sql")),
     },
+    Migration {
+        id: "0008_card_images",
+        requires_backup: false,
+        action: MigrationAction::Sql(include_str!("../migrations/0008_card_images.sql")),
+    },
 ];

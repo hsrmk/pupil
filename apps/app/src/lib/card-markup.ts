@@ -23,18 +23,35 @@ export function escapeHtml(value: string): string {
  * Every replacement runs against already-escaped text, so a card containing
  * `<script>` yields inert markup rather than an element.
  */
-export function renderCardMarkup(value: string, clozeClassName: string): string {
+export function renderCardMarkup(
+  value: string,
+  clozeClassName: string,
+  images: Readonly<Record<string, string>> = {},
+): string {
   // Protect code and math before applying Markdown formatting: asterisks,
   // underscores and newlines inside an equation are part of the expression.
   const fragments: string[] = [];
   let marker = "PUPILFRAGMENT";
   while (value.includes(marker)) marker += "X";
   const protectedText = value.replace(
-    /`([^`\n]+)`|\$\$([\s\S]+?)\$\$|(?<!\\)\$([^$\n]+?)(?<!\\)\$/g,
-    (match, code: string | undefined, block: string | undefined, inline: string | undefined) => {
+    /`([^`\n]+)`|!\[([^\]\n]*)\]\(pupil-image:([\w-]+)\)|\$\$([\s\S]+?)\$\$|(?<!\\)\$([^$\n]+?)(?<!\\)\$/g,
+    (
+      match,
+      code: string | undefined,
+      alt: string | undefined,
+      imageId: string | undefined,
+      block: string | undefined,
+      inline: string | undefined,
+    ) => {
       let html: string;
       if (code !== undefined) {
         html = `<code>${escapeHtml(code)}</code>`;
+      } else if (imageId !== undefined) {
+        const src = images[imageId];
+        html =
+          src && /^data:image\/(?:png|jpeg|gif|webp);base64,[A-Za-z0-9+/=]+$/.test(src)
+            ? `<img src="${src}" alt="${escapeHtml(alt ?? "")}">`
+            : `<span>${escapeHtml(alt || "Image")}</span>`;
       } else {
         try {
           html = katex.renderToString(block ?? inline ?? "", {

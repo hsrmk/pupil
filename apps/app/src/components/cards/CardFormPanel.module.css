@@ -306,6 +306,14 @@
   color: var(--text-secondary);
 }
 
+.newCardFmtBtn.imageButton {
+  width: auto;
+  flex-shrink: 0;
+  padding: 0 var(--space-2);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
 .newCardFmtBtn svg {
   width: 15px;
   height: 15px;
@@ -631,10 +639,24 @@
 
 .newCardFaceText {
   max-width: 380px;
+  min-width: 0;
   color: var(--text-primary);
   font-size: 17px;
   line-height: 1.55;
   word-break: break-word;
+}
+
+.newCardFaceText img {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+}
+
+.newCardFaceText :global(.katex-display) {
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .newCardFaceText.back {

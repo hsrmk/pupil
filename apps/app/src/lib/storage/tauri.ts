@@ -20,6 +20,12 @@ import { invokeCommand } from "../ipc";
  */
 export function createTauriStorage(): PupilStorage {
   return {
+    saveCardImage(base64) {
+      return invokeCommand<string>("save_card_image", { data: base64 });
+    },
+    loadCardImage(id) {
+      return invokeCommand<string | null>("load_card_image", { id });
+    },
     listSpaces() {
       return invokeCommand<SpaceSummary[]>("list_spaces");
     },

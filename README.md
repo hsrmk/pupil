@@ -140,6 +140,7 @@ It is also designed to be more present in your day than Anki typically is — su
 
 - Organize knowledge into named spaces
 - Create cards manually with a desktop-first editor
+- Write inline math with `$...$` and display equations with `$$...$$`; add PNG, JPEG, GIF, or WebP images by choosing, pasting, or dropping them into either side of a card
 - Import `.apkg` decks from Anki
 - Generate cards from a topic with your ChatGPT or Claude plan, or any OpenAI-compatible or Anthropic API key
 - Review AI-generated cards before they land in your library
@@ -147,6 +148,8 @@ It is also designed to be more present in your day than Anki typically is — su
 - Schedule reviews with FSRS
 - Export review history as CSV
 - Store everything locally in SQLite — no account, no sync
+
+Imported images are copied into Pupil's database, so moving the original file does not break the card. The × on an image removes it from the card. Database exports include these stored images. Images are limited to 10 MB each.
 
 ## Principles
 

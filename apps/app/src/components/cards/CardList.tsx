@@ -5,6 +5,7 @@ import { DeleteIcon } from "../icons/DeleteIcon";
 import { EditIcon } from "../icons/EditIcon";
 import { SparklesIcon } from "../icons/SparklesIcon";
 import { SuspendIcon } from "../icons/SuspendIcon";
+import { CardFace } from "./CardFace";
 import styles from "./Cards.module.css";
 import { DeleteCardDialog } from "./DeleteCardDialog";
 
@@ -66,7 +67,7 @@ export function CardList({
               onClick={() => onToggleExpand(card.id)}
               type="button"
             >
-              <span className={styles.cardFront}>{card.front}</span>
+              <CardFace className={styles.cardFront} value={card.front} />
               <span className={`${styles.cardState} ${stateClassName(card.state)}`}>
                 {formatState(card.state)}
               </span>
@@ -88,11 +89,14 @@ export function CardList({
                 <div className={styles.cardQa}>
                   <div className="card-qa-side">
                     <div className={styles.cardQaLabel}>Front</div>
-                    <div className={styles.cardQaText}>{card.front}</div>
+                    <CardFace className={styles.cardQaText} value={card.front} />
                   </div>
                   <div className="card-qa-side">
                     <div className={styles.cardQaLabel}>Back</div>
-                    <div className={`${styles.cardQaText} ${styles.backText}`}>{card.back}</div>
+                    <CardFace
+                      className={`${styles.cardQaText} ${styles.backText}`}
+                      value={card.back}
+                    />
                   </div>
                 </div>
 

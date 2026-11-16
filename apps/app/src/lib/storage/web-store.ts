@@ -16,6 +16,7 @@ export const WEB_STORAGE_KEYS = {
   aiSettings: "pupil.ai.settings",
   cards: "pupil.web.cards",
   importHistory: "pupil.web.import-history",
+  images: "pupil.web.images",
   reviewLogs: "pupil.web.review_logs",
   spaces: "pupil.web.spaces",
   studyDays: "pupil.web.study_days",

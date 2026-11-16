@@ -58,7 +58,7 @@ fn workdir() -> PathBuf {
 #[test]
 fn the_connection_migration_records_existing_installs_as_api_key() {
     let mut connection = Connection::open_in_memory().unwrap();
-    apply_migrations(&mut connection, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    apply_migrations(&mut connection, &MIGRATIONS[..6]).unwrap();
     connection
         .execute(
             "INSERT INTO settings (key, value) VALUES ('ai.has_api_key', '1')",
@@ -84,7 +84,7 @@ fn the_connection_migration_records_existing_installs_as_api_key() {
 #[test]
 fn the_connection_migration_keeps_a_choice_already_made() {
     let mut connection = Connection::open_in_memory().unwrap();
-    apply_migrations(&mut connection, &MIGRATIONS[..MIGRATIONS.len() - 1]).unwrap();
+    apply_migrations(&mut connection, &MIGRATIONS[..6]).unwrap();
     connection
         .execute(
             "INSERT INTO settings (key, value) VALUES ('ai.connection', 'claude_code')",

@@ -30,6 +30,7 @@ import {
   readStudyDays,
   type StoredSpace,
   touchSpace,
+  WEB_STORAGE_KEYS,
   writeCards,
   writeNewCardsLimit,
   writeReviewLogs,
@@ -50,6 +51,35 @@ const RETENTION_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
  */
 export function createWebStorage(): PupilStorage {
   return {
+    async saveCardImage(base64) {
+      const binary = atob(base64);
+      if (binary.length > 10 * 1024 * 1024) throw new Error("Images must be 10 MB or smaller.");
+      const mime = binary.startsWith("\x89PNG\r\n\x1a\n")
+        ? "image/png"
+        : binary.startsWith("\xff\xd8\xff")
+          ? "image/jpeg"
+          : binary.startsWith("GIF87a") || binary.startsWith("GIF89a")
+            ? "image/gif"
+            : binary.startsWith("RIFF") && binary.slice(8, 12) === "WEBP"
+              ? "image/webp"
+              : null;
+      if (!mime) throw new Error("Choose a PNG, JPEG, GIF, or WebP image.");
+      const images = JSON.parse(localStorage.getItem(WEB_STORAGE_KEYS.images) ?? "{}") as Record<
+        string,
+        string
+      >;
+      const id = createId("image");
+      images[id] = `data:${mime};base64,${base64}`;
+      localStorage.setItem(WEB_STORAGE_KEYS.images, JSON.stringify(images));
+      return id;
+    },
+    async loadCardImage(id) {
+      const images = JSON.parse(localStorage.getItem(WEB_STORAGE_KEYS.images) ?? "{}") as Record<
+        string,
+        string
+      >;
+      return images[id] ?? null;
+    },
     async listSpaces() {
       const cards = readCards();
       const now = Date.now();

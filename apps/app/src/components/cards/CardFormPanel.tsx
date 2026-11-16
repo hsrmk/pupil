@@ -1,6 +1,8 @@
 import type { SpaceSummary } from "@pupil/core";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { renderCardMarkup } from "../../lib/card-markup";
+import { getStorage } from "../../lib/storage";
+import { useCardImages } from "../../lib/use-card-images";
 import { BoldIcon } from "../icons/BoldIcon";
 import { ChevronDownIcon } from "../icons/ChevronDownIcon";
 import { CloseIcon } from "../icons/CloseIcon";
@@ -12,6 +14,7 @@ import { SaveIcon } from "../icons/SaveIcon";
 import { TagRemoveIcon } from "../icons/TagRemoveIcon";
 import { Modal } from "../modal";
 import styles from "./CardFormPanel.module.css";
+import { type CardEditorHandle, CardRichEditor } from "./CardRichEditor";
 import { DeleteCardDialog } from "./DeleteCardDialog";
 
 type CardDraft = {
@@ -54,8 +57,17 @@ export function CardFormPanel({
   spaces,
 }: CardFormPanelProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const frontRef = useRef<HTMLTextAreaElement>(null);
-  const backRef = useRef<HTMLTextAreaElement>(null);
+  const frontRef = useRef<CardEditorHandle>(null);
+  const backRef = useRef<CardEditorHandle>(null);
+  const frontImageInput = useRef<HTMLInputElement>(null);
+  const backImageInput = useRef<HTMLInputElement>(null);
+  const draftRef = useRef(draft);
+  const importingRef = useRef(false);
+  draftRef.current = draft;
+  const frontImages = useCardImages(draft.front);
+  const backImages = useCardImages(draft.back);
+  const [imageError, setImageError] = useState<string | null>(null);
+  const [isImportingImage, setIsImportingImage] = useState(false);
   const lastHandledPulseTick = useRef(0);
   const [isPreviewHovered, setIsPreviewHovered] = useState(false);
   const [makeAnother, setMakeAnother] = useState(true);
@@ -77,6 +89,7 @@ export function CardFormPanel({
       setIsDeleteConfirmOpen(false);
       setIsSuccessPulsing(false);
       setShakeKey(0);
+      setImageError(null);
     }
   }, [isOpen]);
 
@@ -102,6 +115,7 @@ export function CardFormPanel({
   const isDraftClean = !draft.front.trim() && !draft.back.trim() && !draft.tagsText.trim();
 
   function handleBackdropClick() {
+    if (isImportingImage) return;
     if (isDraftClean && !hasSelectedCard) {
       onClose();
       return;
@@ -109,11 +123,53 @@ export function CardFormPanel({
     setShakeKey((k) => k + 1);
   }
 
+  async function importImages(files: File[], side: "front" | "back") {
+    if (!files.length || importingRef.current) return;
+    importingRef.current = true;
+    setIsImportingImage(true);
+    setImageError(null);
+    const field = side === "front" ? frontRef.current : backRef.current;
+    let start = field?.selectionStart ?? draftRef.current[side].length;
+    let end = field?.selectionEnd ?? start;
+    try {
+      for (const file of files) {
+        if (file.size > 10 * 1024 * 1024) throw new Error("Images must be 10 MB or smaller.");
+        const data = await new Promise<string>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () =>
+            typeof reader.result === "string"
+              ? resolve(reader.result.split(",")[1] ?? "")
+              : reject(new Error("Could not read image."));
+          reader.onerror = () => reject(new Error("Could not read image."));
+          reader.readAsDataURL(file);
+        });
+        const id = await getStorage().saveCardImage(data);
+        const alt = (file.name.replace(/\.[^.]+$/, "") || "Image").replace(/[[\]\n]/g, " ");
+        const markdown = `![${alt}](pupil-image:${id})`;
+        const current = draftRef.current[side];
+        const next = `${current.slice(0, start)}${markdown}${current.slice(end)}`;
+        draftRef.current = { ...draftRef.current, [side]: next };
+        onChange({ [side]: next });
+        start += markdown.length;
+        end = start;
+      }
+      queueMicrotask(() => {
+        field?.focus();
+        field?.setSelectionRange(start, start);
+      });
+    } catch (cause) {
+      setImageError(cause instanceof Error ? cause.message : "Could not import image.");
+    } finally {
+      importingRef.current = false;
+      setIsImportingImage(false);
+    }
+  }
+
   return (
     <Modal
       ariaDescribedBy={error ? "card-form-error" : "card-form-description"}
       ariaLabelledBy="card-form-title"
-      closeOnEscape={!isSubmitting && !isDeleting}
+      closeOnEscape={!isSubmitting && !isDeleting && !isImportingImage}
       isOpen={isOpen}
       onBackdropClick={handleBackdropClick}
       onClose={onClose}
@@ -128,12 +184,14 @@ export function CardFormPanel({
               {hasSelectedCard ? "Edit Card" : "New Card"}
             </h2>
             <p className={styles.newCardDescription} id="card-form-description">
-              Write a focused prompt/answer pair. Keep the front atomic and the back tight.
+              Write a focused prompt/answer pair. Keep the front atomic and the back tight. Use
+              $...$ or $$...$$ for math; add, paste, or drop images into either side.
             </p>
           </div>
           <button
             aria-label="Close"
             className={styles.newCardCloseButton}
+            disabled={isImportingImage}
             onClick={onClose}
             type="button"
           >
@@ -165,21 +223,26 @@ export function CardFormPanel({
             {hasSelectedCard ? (
               <button
                 className={`${styles.newCardDiscardBtn} ${styles.danger}`}
-                disabled={isDeleting || isSubmitting}
+                disabled={isDeleting || isSubmitting || isImportingImage}
                 onClick={() => setIsDeleteConfirmOpen(true)}
                 type="button"
               >
                 {isDeleting ? "Deleting..." : "Delete"}
               </button>
             ) : (
-              <button className={styles.newCardDiscardBtn} onClick={onClose} type="button">
+              <button
+                className={styles.newCardDiscardBtn}
+                disabled={isImportingImage}
+                onClick={onClose}
+                type="button"
+              >
                 Discard
               </button>
             )}
 
             <button
               className={styles.newCardSaveBtn}
-              disabled={isSubmitting || isDeleting}
+              disabled={isSubmitting || isDeleting || isImportingImage}
               onClick={() => onSubmit({ keepOpen: !hasSelectedCard && makeAnother })}
               type="button"
             >
@@ -257,17 +320,41 @@ export function CardFormPanel({
                 >
                   <ClozeIcon />
                 </button>
-                <span className={styles.newCardFmtHint}>Markdown</span>
+                <button
+                  className={`${styles.newCardFmtBtn} ${styles.imageButton}`}
+                  title="Add image to front"
+                  type="button"
+                  onClick={() => frontImageInput.current?.click()}
+                >
+                  ＋ Image
+                </button>
+                <input
+                  ref={frontImageInput}
+                  hidden
+                  type="file"
+                  accept="image/png,image/jpeg,image/gif,image/webp"
+                  multiple
+                  onChange={(event) => {
+                    void importImages(Array.from(event.target.files ?? []), "front");
+                    event.target.value = "";
+                  }}
+                />
+                <span className={styles.newCardFmtHint}>Markdown + LaTeX</span>
               </div>
 
-              <textarea
+              <CardRichEditor
                 className={`${styles.newCardTextarea} ${styles.front}`}
-                data-modal-autofocus
-                onChange={(event) => onChange({ front: event.target.value })}
+                label="Front"
                 placeholder="A clear, single question or prompt..."
                 ref={frontRef}
-                rows={4}
                 value={draft.front}
+                images={frontImages}
+                disabled={isImportingImage}
+                onChange={(value) => onChange({ front: value })}
+                onFiles={(files) => {
+                  void importImages(files, "front");
+                }}
+                autoFocus
               />
 
               <div
@@ -320,16 +407,40 @@ export function CardFormPanel({
                 >
                   <CodeIcon />
                 </button>
-                <span className={styles.newCardFmtHint}>Markdown</span>
+                <button
+                  className={`${styles.newCardFmtBtn} ${styles.imageButton}`}
+                  title="Add image to back"
+                  type="button"
+                  onClick={() => backImageInput.current?.click()}
+                >
+                  ＋ Image
+                </button>
+                <input
+                  ref={backImageInput}
+                  hidden
+                  type="file"
+                  accept="image/png,image/jpeg,image/gif,image/webp"
+                  multiple
+                  onChange={(event) => {
+                    void importImages(Array.from(event.target.files ?? []), "back");
+                    event.target.value = "";
+                  }}
+                />
+                <span className={styles.newCardFmtHint}>Markdown + LaTeX</span>
               </div>
 
-              <textarea
+              <CardRichEditor
                 className={`${styles.newCardTextarea} ${styles.back}`}
-                onChange={(event) => onChange({ back: event.target.value })}
+                label="Back"
                 placeholder="A direct answer. Just enough context to be unambiguous..."
                 ref={backRef}
-                rows={7}
                 value={draft.back}
+                images={backImages}
+                disabled={isImportingImage}
+                onChange={(value) => onChange({ back: value })}
+                onFiles={(files) => {
+                  void importImages(files, "back");
+                }}
               />
 
               <div
@@ -341,6 +452,7 @@ export function CardFormPanel({
               </div>
             </div>
           </div>
+          {imageError ? <p role="alert">{imageError}</p> : null}
         </div>
 
         <div className={styles.newCardTagsSection}>
@@ -449,6 +561,7 @@ export function CardFormPanel({
                         "Start typing...",
                         styles.newCardFaceEmpty,
                         styles.newCardClozeBlank,
+                        frontImages,
                       ),
                     }}
                   />
@@ -476,6 +589,7 @@ export function CardFormPanel({
                         "Start typing...",
                         styles.newCardFaceEmpty,
                         styles.newCardClozeBlank,
+                        backImages,
                       ),
                     }}
                   />
@@ -544,7 +658,7 @@ export function CardFormPanel({
 }
 
 function wordCount(value: string): number {
-  const trimmed = value.trim();
+  const trimmed = value.replace(/!\[[^\]\n]*\]\(pupil-image:[\w-]+\)/g, " ").trim();
   return trimmed ? trimmed.split(/\s+/).length : 0;
 }
 
@@ -572,7 +686,7 @@ function parseTags(tagsText: string): string[] {
 }
 
 function insertFormat(
-  element: HTMLTextAreaElement | null,
+  element: CardEditorHandle | null,
   value: string,
   onChange: (patch: Partial<CardDraft>) => void,
   field: "front" | "back",
@@ -601,8 +715,8 @@ function insertFormat(
 }
 
 function insertCloze(
-  frontElement: HTMLTextAreaElement | null,
-  backElement: HTMLTextAreaElement | null,
+  frontElement: CardEditorHandle | null,
+  backElement: CardEditorHandle | null,
   frontValue: string,
   backValue: string,
   onChange: (patch: Partial<CardDraft>) => void,
@@ -638,10 +752,11 @@ function renderPreviewHtml(
   emptyLabel: string,
   emptyClassName: string,
   clozeClassName: string,
+  images: Readonly<Record<string, string>>,
 ): string {
   if (!value.trim()) {
     return `<span class="${emptyClassName}">${emptyLabel}</span>`;
   }
 
-  return renderCardMarkup(value, clozeClassName);
+  return renderCardMarkup(value, clozeClassName, images);
 }

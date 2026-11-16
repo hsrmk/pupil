@@ -1,6 +1,7 @@
 mod ai;
 mod analytics;
 mod app;
+mod card_images;
 mod cards;
 mod commands;
 mod constants;
@@ -39,6 +40,7 @@ use crate::commands::{
     save_ai_settings, save_study_settings, start_chatgpt_sign_in, suspend_card,
     test_ai_provider_connection, undo_review_card, update_card,
 };
+use crate::commands::{load_card_image, save_card_image};
 #[cfg(debug_assertions)]
 use crate::constants::{
     DEVELOPER_OPEN_DEVTOOLS_MENU_ID, DEVELOPER_RESET_ONBOARDING_EVENT,
@@ -157,6 +159,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_bootstrap_state,
+            save_card_image,
+            load_card_image,
             list_spaces,
             create_space,
             rename_space,

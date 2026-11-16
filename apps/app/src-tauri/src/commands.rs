@@ -71,6 +71,16 @@ async fn run_blocking<T: Send + 'static>(
 }
 
 #[tauri::command]
+pub(crate) fn save_card_image(app: AppHandle, data: String) -> AppResult<String> {
+    crate::card_images::save_image(&open_app_connection(&app)?, &data)
+}
+
+#[tauri::command]
+pub(crate) fn load_card_image(app: AppHandle, id: String) -> AppResult<Option<String>> {
+    crate::card_images::load_image(&open_app_connection(&app)?, &id)
+}
+
+#[tauri::command]
 #[tracing::instrument(skip(app))]
 pub(crate) fn get_bootstrap_state(app: AppHandle) -> Result<BootstrapState, AppError> {
     let app_data_dir = app_data_dir(&app)?;
