@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { createRef, useState } from "react";
 import { describe, expect, it, vi } from "vitest";
 import { type CardEditorHandle, CardRichEditor } from "./CardRichEditor";
@@ -19,6 +20,61 @@ function Editor({ initial }: { initial: string }) {
 }
 
 describe("inline card editor", () => {
+  it("renders inline and block math, reveals the source for editing, and renders it again when the caret leaves", () => {
+    const ref = createRef<CardEditorHandle>();
+    const value = "Before $x^2$ after $$\\frac{1}{2}$$ end";
+    render(
+      <CardRichEditor
+        ref={ref}
+        value={value}
+        images={{}}
+        label="Front"
+        placeholder="Write"
+        disabled={false}
+        onChange={vi.fn()}
+        onFiles={vi.fn()}
+      />,
+    );
+    const editor = screen.getByRole("textbox", { name: "Front" });
+    expect(editor.querySelectorAll("[data-math-index]")).toHaveLength(2);
+    fireEvent.click(editor.querySelector("[data-math-index]") as HTMLElement);
+    expect(editor.textContent).toContain("$x^2$");
+    expect(editor.querySelectorAll("[data-math-index]")).toHaveLength(1);
+    act(() => {
+      ref.current?.setSelectionRange(value.length, value.length);
+      document.dispatchEvent(new Event("selectionchange"));
+    });
+    expect(editor.querySelectorAll("[data-math-index]")).toHaveLength(2);
+    expect(editor.textContent).not.toContain("$x^2$");
+  });
+
+  it("leaves invalid equations and math in code as editable text", () => {
+    render(<Editor initial={"`$x$` and $\\notacommand$"} />);
+    const editor = screen.getByRole("textbox", { name: "Front" });
+    expect(editor.textContent).toContain("`$x$` and $\\notacommand$");
+    expect(editor.querySelector("[data-math-index]")).toBeNull();
+  });
+
+  it("renders an equation when the editor loses focus", () => {
+    render(<Editor initial="A $x$ B" />);
+    const editor = screen.getByRole("textbox", { name: "Front" });
+    fireEvent.click(editor.querySelector("[data-math-index]") as HTMLElement);
+    expect(editor.textContent).toContain("$x$");
+    fireEvent.blur(editor);
+    expect(editor.querySelector("[data-math-index]")).not.toBeNull();
+  });
+
+  it("does not mistake a partially typed display equation for inline math", async () => {
+    const user = userEvent.setup();
+    render(<Editor initial="" />);
+    const editor = screen.getByRole("textbox", { name: "Front" });
+    await user.click(editor);
+    await user.type(editor, "$$x$");
+    expect(editor.textContent).toBe("$$x$");
+    expect(editor.querySelector("[data-math-index]")).toBeNull();
+    await user.type(editor, "$ ");
+    expect(editor.querySelector(".katex-display")).not.toBeNull();
+  });
   it("shows stored images in place and removes only the selected image", () => {
     render(
       <Editor initial="Before ![one](pupil-image:abc) middle ![two](pupil-image:abc) after" />,
@@ -28,6 +84,17 @@ describe("inline card editor", () => {
     expect(screen.queryByAltText("one")).toBeNull();
     expect(screen.getByAltText("two")).toBeTruthy();
     expect(screen.getByRole("textbox").textContent).toContain("Before  middle");
+  });
+
+  it("keeps the remove control on the corner of a height-limited portrait", () => {
+    render(<Editor initial="![portrait](pupil-image:abc)" />);
+    const image = screen.getByAltText("portrait");
+    Object.defineProperties(image, { naturalWidth: { value: 400 }, naturalHeight: { value: 800 } });
+    fireEvent.load(image);
+    expect(image.parentElement?.style.width).toBe("110px");
+    expect(screen.getByRole("button", { name: "Remove portrait" }).parentElement).toBe(
+      image.parentElement,
+    );
   });
 
   it("tracks cursor positions around an embedded image for formatting and insertion", () => {

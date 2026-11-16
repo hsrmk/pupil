@@ -1,4 +1,12 @@
-import { forwardRef, useImperativeHandle, useLayoutEffect, useRef } from "react";
+import katex from "katex";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import styles from "./CardRichEditor.module.css";
 
 export type CardEditorHandle = {
@@ -20,7 +28,20 @@ type Props = {
   className?: string;
 };
 
-const imagePattern = /!\[([^\]\n]*)\]\(pupil-image:([\w-]+)\)/g;
+const tokenPattern =
+  /`([^`\n]+)`|!\[([^\]\n]*)\]\(pupil-image:([\w-]+)\)|\$\$([\s\S]+?)\$\$|(?<![\\$])\$([^$\n]+?)(?<!\\)\$(?!\$)/g;
+
+function activeMathAt(value: string, start: number, end: number): number | null {
+  for (const match of value.matchAll(tokenPattern)) {
+    if (
+      (match[4] !== undefined || match[5] !== undefined) &&
+      start < match.index + match[0].length &&
+      end >= match.index
+    )
+      return match.index;
+  }
+  return null;
+}
 
 function serialize(node: Node): string {
   if (node.nodeType === Node.TEXT_NODE) return node.textContent ?? "";
@@ -78,6 +99,10 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
   ref,
 ) {
   const editorRef = useRef<HTMLDivElement>(null);
+  const valueRef = useRef(value);
+  valueRef.current = value;
+  const [activeMath, setActiveMath] = useState<number | null>(null);
+  const pendingCaret = useRef<number | null>(null);
   const changeRef = useRef(onChange);
   changeRef.current = onChange;
   useImperativeHandle(
@@ -108,14 +133,40 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
     [],
   );
 
+  useEffect(() => {
+    function updateSelection() {
+      const editor = editorRef.current;
+      const selection = window.getSelection();
+      if (!editor || !selection?.rangeCount || !editor.contains(selection.anchorNode)) {
+        setActiveMath(null);
+        return;
+      }
+      setActiveMath(
+        activeMathAt(valueRef.current, offsetIn(editor, false), offsetIn(editor, true)),
+      );
+    }
+    document.addEventListener("selectionchange", updateSelection);
+    return () => document.removeEventListener("selectionchange", updateSelection);
+  }, []);
+
   useLayoutEffect(() => {
     const editor = editorRef.current;
     if (!editor) return;
     const currentImages = Array.from(editor.querySelectorAll<HTMLImageElement>("img[data-id]"));
-    const expectedImages = [...value.matchAll(imagePattern)];
+    const tokens = [...value.matchAll(tokenPattern)];
+    const expectedImages = tokens.filter((token) => token[3] !== undefined);
+    const expectedMath = tokens
+      .filter(
+        (token) => (token[4] !== undefined || token[5] !== undefined) && token.index !== activeMath,
+      )
+      .map((token) => String(token.index));
+    const currentMath = Array.from(editor.querySelectorAll<HTMLElement>("[data-math-index]")).map(
+      (node) => node.dataset.mathIndex,
+    );
     if (
       serialize(editor) === value &&
       currentImages.length === expectedImages.length &&
+      currentMath.join(",") === expectedMath.join(",") &&
       currentImages.every(
         (image) =>
           (image.getAttribute("src") ?? "") === (images[image.dataset.id ?? ""] ?? "") &&
@@ -129,16 +180,54 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
     const end = focused ? offsetIn(editor, true) : 0;
     editor.replaceChildren();
     let last = 0;
-    for (const match of value.matchAll(imagePattern)) {
+    for (const match of tokens) {
+      const isMath = match[4] !== undefined || match[5] !== undefined;
+      if (match[3] === undefined && (!isMath || match.index === activeMath)) continue;
       editor.append(document.createTextNode(value.slice(last, match.index)));
       const wrapper = document.createElement("span");
+      if (isMath) {
+        try {
+          wrapper.innerHTML = katex.renderToString(match[4] ?? match[5] ?? "", {
+            displayMode: match[4] !== undefined,
+            throwOnError: true,
+            trust: false,
+          });
+        } catch {
+          // Keep incomplete or invalid expressions editable as text.
+          editor.append(document.createTextNode(match[0]));
+          last = match.index + match[0].length;
+          continue;
+        }
+        wrapper.className = `${styles.math}${match[4] !== undefined ? ` ${styles.mathBlock}` : ""}`;
+        wrapper.contentEditable = "false";
+        wrapper.dataset.markdown = match[0];
+        wrapper.dataset.mathIndex = String(match.index);
+        wrapper.addEventListener("click", () => {
+          pendingCaret.current = match.index + match[0].length - (match[4] !== undefined ? 2 : 1);
+          setActiveMath(match.index);
+          editor.focus();
+        });
+        editor.append(wrapper);
+        last = match.index + match[0].length;
+        continue;
+      }
       wrapper.className = styles.image;
       wrapper.contentEditable = "false";
       wrapper.dataset.markdown = match[0];
       const image = document.createElement("img");
-      image.dataset.id = match[2];
-      if (images[match[2]]) image.src = images[match[2]];
-      image.alt = match[1] || "Image";
+      image.dataset.id = match[3];
+      image.addEventListener("load", () => {
+        // Match the wrapper to the displayed image even when its height, rather
+        // than its width, is the limiting dimension (for example, a portrait).
+        const width = Math.min(
+          image.naturalWidth,
+          320,
+          (image.naturalWidth * 220) / image.naturalHeight,
+        );
+        if (Number.isFinite(width) && width > 0) wrapper.style.width = `${width}px`;
+      });
+      if (images[match[3]]) image.src = images[match[3]];
+      image.alt = match[2] || "Image";
       const remove = document.createElement("button");
       remove.type = "button";
       remove.className = styles.remove;
@@ -157,14 +246,15 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
     if (focused) {
       const selection = window.getSelection();
       const range = document.createRange();
-      const [startNode, startOffset] = locate(editor, start);
-      const [endNode, endOffset] = locate(editor, end);
+      const [startNode, startOffset] = locate(editor, pendingCaret.current ?? start);
+      const [endNode, endOffset] = locate(editor, pendingCaret.current ?? end);
+      pendingCaret.current = null;
       range.setStart(startNode, startOffset);
       range.setEnd(endNode, endOffset);
       selection?.removeAllRanges();
       selection?.addRange(range);
     }
-  }, [value, images, disabled]);
+  }, [value, images, disabled, activeMath]);
 
   return (
     <div
@@ -179,7 +269,13 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
       aria-disabled={disabled}
       data-placeholder={placeholder}
       data-modal-autofocus={autoFocus || undefined}
-      onInput={(event) => onChange(serialize(event.currentTarget))}
+      onBlur={() => setActiveMath(null)}
+      onInput={(event) => {
+        const editor = event.currentTarget;
+        const next = serialize(editor);
+        setActiveMath(activeMathAt(next, offsetIn(editor, false), offsetIn(editor, true)));
+        onChange(next);
+      }}
       onPaste={(event) => {
         const files = Array.from(event.clipboardData.files).filter((file) =>
           file.type.startsWith("image/"),

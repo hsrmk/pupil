@@ -185,7 +185,8 @@ export function CardFormPanel({
             </h2>
             <p className={styles.newCardDescription} id="card-form-description">
               Write a focused prompt/answer pair. Keep the front atomic and the back tight. Use
-              $...$ or $$...$$ for math; add, paste, or drop images into either side.
+              $...$ or $$...$$ for math; click a rendered equation to edit it. Add, paste, or drop
+              images into either side.
             </p>
           </div>
           <button
