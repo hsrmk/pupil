@@ -5,7 +5,6 @@ import {
   createRouter,
   RouterProvider,
 } from "@tanstack/react-router";
-import { GlobalAiGeneratePage, SpaceAiGeneratePage } from "./routes/pages/AiGeneratePage";
 import { CardsPage } from "./routes/pages/CardsPage";
 import { DashboardPage } from "./routes/pages/DashboardPage";
 import { GlobalImportPage, SpaceImportPage } from "./routes/pages/ImportPage";
@@ -55,12 +54,6 @@ const studyRoute = createRoute({
   component: GlobalStudyPage,
 });
 
-const generateRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/generate",
-  component: GlobalAiGeneratePage,
-});
-
 const spaceRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: "/spaces/$spaceId",
@@ -79,12 +72,6 @@ const spaceStudyRoute = createRoute({
   component: SpaceStudyPage,
 });
 
-const spaceGenerateRoute = createRoute({
-  getParentRoute: () => rootRoute,
-  path: "/spaces/$spaceId/generate",
-  component: SpaceAiGeneratePage,
-});
-
 const routeTree = rootRoute.addChildren([
   dashboardRoute,
   onboardingRoute,
@@ -92,11 +79,9 @@ const routeTree = rootRoute.addChildren([
   settingsRoute,
   importRoute,
   studyRoute,
-  generateRoute,
   spaceRoute,
   spaceImportRoute,
   spaceStudyRoute,
-  spaceGenerateRoute,
 ]);
 
 export const router = createRouter({

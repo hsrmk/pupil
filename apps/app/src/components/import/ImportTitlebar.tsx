@@ -1,7 +1,7 @@
 import styles from "../app-shell/AppTitlebar.module.css";
 import { Button } from "../Button";
 import { EyeLogo } from "../brand";
-import { BackIcon } from "../icons/AiGenerateIcons";
+import { BackIcon } from "../icons/BackIcon";
 
 type ImportTitlebarProps = {
   backLabel: string;

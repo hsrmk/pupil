@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { AiGenerateTitlebar } from "../../components/ai-generate";
 import { ScreenErrorBoundary } from "../../components/ErrorBoundary";
 import { SettingsScreen } from "../../components/settings";
 import { useCardsQuery, useSpacesQuery, useStudySettingsQuery } from "../../lib/app-queries";
@@ -11,13 +10,7 @@ import { resetOnboarding } from "../../lib/onboarding";
 import { appQueryKeys, invalidateAllAppData } from "../../lib/query";
 import { getStorage } from "../../lib/storage";
 
-export function SettingsPage({
-  fromAi = false,
-  onBack,
-}: {
-  fromAi?: boolean;
-  onBack?: () => void;
-}) {
+export function SettingsPage() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const cards = useCardsQuery().data ?? [];
@@ -52,9 +45,6 @@ export function SettingsPage({
   const content = (
     <SettingsScreen
       cardsCount={cards.length}
-      onAiSettingsChanged={() => {
-        void queryClient.invalidateQueries({ queryKey: appQueryKeys.aiSettings });
-      }}
       isSavingStudySettings={saveStudySettingsMutation.isPending}
       onResetAllData={async () => {
         await resetMutation.mutateAsync();
@@ -66,15 +56,6 @@ export function SettingsPage({
       studySettings={studySettings}
     />
   );
-
-  if (fromAi && onBack) {
-    return (
-      <>
-        <AiGenerateTitlebar backLabel="AI Generate" onBack={onBack} />
-        {content}
-      </>
-    );
-  }
 
   return (
     <ScreenErrorBoundary

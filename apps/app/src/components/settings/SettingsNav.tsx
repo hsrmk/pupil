@@ -1,6 +1,6 @@
 import styles from "./Settings.module.css";
 
-export type SettingsSectionId = "general" | "ai" | "data" | "about";
+export type SettingsSectionId = "general" | "data" | "about";
 
 type SettingsNavProps = {
   activeSection: SettingsSectionId;
@@ -9,7 +9,6 @@ type SettingsNavProps = {
 
 const NAV_ITEMS: Array<{ id: SettingsSectionId; label: string }> = [
   { id: "general", label: "General" },
-  { id: "ai", label: "AI Provider" },
   { id: "data", label: "Data" },
   { id: "about", label: "About" },
 ];
