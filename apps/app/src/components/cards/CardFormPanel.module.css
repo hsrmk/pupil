@@ -262,14 +262,6 @@
   opacity: 0.6;
 }
 
-.newCardWordCount.warn {
-  color: var(--state-learning);
-}
-
-.newCardWordCount.over {
-  color: var(--error);
-}
-
 .newCardToolbar {
   display: flex;
   align-items: center;
@@ -368,19 +360,6 @@
 
 .newCardTextarea.back {
   min-height: 148px;
-}
-
-.newCardLimitGuidance {
-  margin-top: var(--space-1-5);
-  color: var(--text-tertiary);
-  font-size: 11px;
-  line-height: 1.4;
-  font-style: italic;
-}
-
-.newCardLimitGuidance.over {
-  color: var(--error);
-  font-style: normal;
 }
 
 .newCardTagsSection,

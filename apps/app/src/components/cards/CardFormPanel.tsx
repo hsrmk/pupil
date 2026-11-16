@@ -39,9 +39,6 @@ type CardFormPanelProps = {
   spaces: SpaceSummary[];
 };
 
-const FRONT_LIMIT = 30;
-const BACK_LIMIT = 60;
-
 export function CardFormPanel({
   draft,
   error,
@@ -266,11 +263,7 @@ export function CardFormPanel({
             <div className={styles.newCardFieldBlock}>
               <div className={styles.newCardFieldChrome}>
                 <span className={styles.newCardFieldLabel}>Front</span>
-                <span
-                  className={`${styles.newCardWordCount}${wordCountClassName(frontWordCount, FRONT_LIMIT, styles)}`}
-                >
-                  {frontWordCount} / {FRONT_LIMIT} words
-                </span>
+                <span className={styles.newCardWordCount}>{frontWordCount} words</span>
               </div>
 
               <div className={`${styles.newCardToolbar} ${styles.frontToolbar}`}>
@@ -357,24 +350,12 @@ export function CardFormPanel({
                 }}
                 autoFocus
               />
-
-              <div
-                className={`${styles.newCardLimitGuidance}${frontWordCount > FRONT_LIMIT ? ` ${styles.over}` : ""}`}
-              >
-                {frontWordCount > FRONT_LIMIT
-                  ? `${frontWordCount - FRONT_LIMIT} word${frontWordCount - FRONT_LIMIT === 1 ? "" : "s"} over. Can this be tighter?`
-                  : "One question. One concept. No compound prompts."}
-              </div>
             </div>
 
             <div className={styles.newCardFieldBlock}>
               <div className={styles.newCardFieldChrome}>
                 <span className={styles.newCardFieldLabel}>Back</span>
-                <span
-                  className={`${styles.newCardWordCount}${wordCountClassName(backWordCount, BACK_LIMIT, styles)}`}
-                >
-                  {backWordCount} / {BACK_LIMIT} words
-                </span>
+                <span className={styles.newCardWordCount}>{backWordCount} words</span>
               </div>
 
               <div className={styles.newCardToolbar}>
@@ -443,14 +424,6 @@ export function CardFormPanel({
                   void importImages(files, "back");
                 }}
               />
-
-              <div
-                className={`${styles.newCardLimitGuidance}${backWordCount > BACK_LIMIT ? ` ${styles.over}` : ""}`}
-              >
-                {backWordCount > BACK_LIMIT
-                  ? `${backWordCount - BACK_LIMIT} word${backWordCount - BACK_LIMIT === 1 ? "" : "s"} over. Try splitting into two cards.`
-                  : "Answer the front, then stop. If you need a paragraph, the card is too broad."}
-              </div>
             </div>
           </div>
           {imageError ? <p role="alert">{imageError}</p> : null}
@@ -616,14 +589,13 @@ export function CardFormPanel({
             <div className={styles.newCardOpinionItem}>
               <span className={styles.newCardOpinionBullet} />
               <span>
-                <strong>Front: 30 words max.</strong> One question testing one atomic piece of
-                knowledge.
+                <strong>Front:</strong> Write the question or prompt you want to remember.
               </span>
             </div>
             <div className={styles.newCardOpinionItem}>
               <span className={styles.newCardOpinionBullet} />
               <span>
-                <strong>Back: 60 words max.</strong> A direct answer with just enough context.
+                <strong>Back:</strong> Include the answer and any useful context.
               </span>
             </div>
             <div className={styles.newCardOpinionItem}>
@@ -661,18 +633,6 @@ export function CardFormPanel({
 function wordCount(value: string): number {
   const trimmed = value.replace(/!\[[^\]\n]*\]\(pupil-image:[\w-]+\)/g, " ").trim();
   return trimmed ? trimmed.split(/\s+/).length : 0;
-}
-
-function wordCountClassName(count: number, limit: number, s: Record<string, string>): string {
-  if (count > limit) {
-    return ` ${s.over}`;
-  }
-
-  if (count > limit * 0.8) {
-    return ` ${s.warn}`;
-  }
-
-  return "";
 }
 
 function normalizeTag(value: string): string {

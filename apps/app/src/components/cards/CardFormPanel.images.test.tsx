@@ -28,6 +28,32 @@ function Editor() {
 }
 
 describe("card images", () => {
+  it("allows long card fronts and backs without a word limit warning", () => {
+    const submit = vi.fn();
+    render(
+      <CardFormPanel
+        draft={{
+          front: "word ".repeat(100),
+          back: "answer ".repeat(120),
+          spaceId: "",
+          tagsText: "",
+        }}
+        error={null}
+        hasSelectedCard={false}
+        isDeleting={false}
+        isOpen
+        isSubmitting={false}
+        onChange={vi.fn()}
+        onClose={vi.fn()}
+        onDelete={vi.fn()}
+        onSubmit={submit}
+        spaces={[]}
+      />,
+    );
+    expect(screen.queryByText(/words max|words? over/i)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Save card" }));
+    expect(submit).toHaveBeenCalled();
+  });
   it("imports an image into Pupil and renders its Markdown reference in the preview", async () => {
     render(<Editor />);
     const input = document.body.querySelector<HTMLInputElement>('input[type="file"]');
