@@ -10,7 +10,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { CardsScreen } from "../../components/cards";
 import { ScreenErrorBoundary } from "../../components/ErrorBoundary";
-import { explainCard } from "../../lib/ai-explain";
 import {
   useCardsQuery,
   useSpacesQuery,
@@ -113,7 +112,6 @@ export function CardsPage() {
         onUpdateCard={async (input) => {
           await updateCardMutation.mutateAsync(input);
         }}
-        onExplainCard={(input) => explainCard(input)}
         spaces={spaces}
       />
     </ScreenErrorBoundary>

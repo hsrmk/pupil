@@ -1,13 +1,9 @@
 import type { CardRecord, SpaceSummary } from "@pupil/core";
 import { buildAdmittedSet, buildDueQueue, previewCardScheduling } from "@pupil/core";
 import { useEffect, useMemo, useState } from "react";
-import type { ExplainCardResult } from "../../lib/ai-explain";
-import type { ExplainCardPayload } from "../../lib/ai-explanation";
 import styles from "./Study.module.css";
 import { StudyActions } from "./StudyActions";
 import { StudyBar } from "./StudyBar";
-import { StudyExplainPanel } from "./StudyExplainPanel";
-import { StudyExplainTrigger } from "./StudyExplainTrigger";
 import { StudyReviewCard } from "./StudyReviewCard";
 import { StudySummary } from "./StudySummary";
 import type { StudyCardRecord, StudyGrade, StudyScope } from "./types";
@@ -15,15 +11,10 @@ import type { StudyCardRecord, StudyGrade, StudyScope } from "./types";
 type UndoEntry = { snapshot: StudyCardRecord; grade: StudyGrade };
 
 type StudyScreenProps = {
-  aiAvailable?: boolean;
   cards: StudyCardRecord[];
-  explainButtonEnabled: boolean;
-  hasAiKey: boolean;
   newCardsBudget: number | null;
   onBack: () => void;
   onDeleteCard: (input: { id: string }) => Promise<void>;
-  onExplainCard: (input: { cardId: string; force?: boolean }) => Promise<ExplainCardResult>;
-  onMissingAiKey: () => void;
   onReviewCard: (input: { card: CardRecord; grade: StudyGrade }) => Promise<CardRecord>;
   onSuspendCard: (input: { id: string; suspended: boolean }) => Promise<CardRecord>;
   onUndoReview: (input: { snapshot: CardRecord }) => Promise<CardRecord>;
@@ -33,26 +24,11 @@ type StudyScreenProps = {
   space?: SpaceSummary | null;
 };
 
-type ExplainState = {
-  cardId: string;
-  cached: boolean;
-  error: string | null;
-  generatedAt: number | null;
-  isLoading: boolean;
-  payload: ExplainCardPayload | null;
-  unavailable: boolean;
-};
-
 export function StudyScreen({
-  aiAvailable = true,
   cards,
-  explainButtonEnabled,
-  hasAiKey,
   newCardsBudget,
   onBack,
   onDeleteCard,
-  onExplainCard,
-  onMissingAiKey,
   onReviewCard,
   onSuspendCard,
   onUndoReview,
@@ -85,7 +61,6 @@ export function StudyScreen({
   const [undoStack, setUndoStack] = useState<UndoEntry[]>([]);
   const [priorityCardId, setPriorityCardId] = useState<string | null>(null);
   const [isUndoing, setIsUndoing] = useState(false);
-  const [explain, setExplain] = useState<ExplainState | null>(null);
 
   const queue = useMemo(() => {
     const base = buildDueQueue(sessionCards, now).filter((card) => sessionCardIds.has(card.id));
@@ -160,15 +135,7 @@ export function StudyScreen({
     setUndoStack([]);
     setPriorityCardId(null);
     setIsUndoing(false);
-    setExplain(null);
   }, [scope, scopeLabel, sessionKey]);
-
-  useEffect(() => {
-    if (!currentCard) {
-      return;
-    }
-    setExplain((existing) => (existing && existing.cardId !== currentCard.id ? null : existing));
-  }, [currentCard?.id]);
 
   useEffect(() => {
     const intervalId = window.setInterval(() => setNow(Date.now()), 15000);
@@ -218,12 +185,6 @@ export function StudyScreen({
         return;
       }
 
-      if (event.code === "KeyE" && explainButtonEnabled && !event.metaKey && !event.ctrlKey) {
-        event.preventDefault();
-        handleExplainTrigger();
-        return;
-      }
-
       const mapping: Record<string, StudyGrade> = {
         Digit1: 1,
         Digit2: 2,
@@ -242,7 +203,6 @@ export function StudyScreen({
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
-    explainButtonEnabled,
     isAnswerVisible,
     isSubmittingReview,
     isSummaryVisible,
@@ -323,87 +283,6 @@ export function StudyScreen({
     } finally {
       setIsUndoing(false);
     }
-  }
-
-  async function runExplain(cardId: string, force: boolean) {
-    setExplain({
-      cardId,
-      cached: false,
-      error: null,
-      generatedAt: null,
-      isLoading: true,
-      payload: null,
-      unavailable: false,
-    });
-
-    try {
-      const result = await onExplainCard({ cardId, force });
-      setExplain({
-        cardId,
-        cached: result.cached,
-        error: null,
-        generatedAt: result.generatedAt,
-        isLoading: false,
-        payload: result.payload,
-        unavailable: false,
-      });
-    } catch (nextError: unknown) {
-      const message =
-        nextError instanceof Error ? nextError.message : "Failed to generate explanation.";
-      setExplain({
-        cardId,
-        cached: false,
-        error: message,
-        generatedAt: null,
-        isLoading: false,
-        payload: null,
-        unavailable: false,
-      });
-    }
-  }
-
-  function handleExplainTrigger() {
-    if (!displayCard) {
-      return;
-    }
-    if (!aiAvailable) {
-      setExplain({
-        cardId: displayCard.id,
-        cached: false,
-        error: null,
-        generatedAt: null,
-        isLoading: false,
-        payload: null,
-        unavailable: true,
-      });
-      return;
-    }
-    if (!hasAiKey) {
-      onMissingAiKey();
-      return;
-    }
-    if (explain && explain.cardId === displayCard.id && !explain.error && !explain.unavailable) {
-      return;
-    }
-    void runExplain(displayCard.id, false);
-  }
-
-  function handleExplainRetry() {
-    if (!explain) {
-      return;
-    }
-    void runExplain(explain.cardId, false);
-  }
-
-  function handleExplainRegenerate() {
-    if (!explain) {
-      return;
-    }
-    void runExplain(explain.cardId, true);
-  }
-
-  function handleExplainClose() {
-    setExplain(null);
   }
 
   async function handleQuickDelete() {
@@ -549,14 +428,6 @@ export function StudyScreen({
             />
           </div>
 
-          {explainButtonEnabled && isAnswerVisible && !isSuspendedView ? (
-            <StudyExplainTrigger
-              hasApiKey={aiAvailable ? hasAiKey : true}
-              isLoading={explain?.isLoading === true && explain.cardId === displayCard.id}
-              onActivate={handleExplainTrigger}
-            />
-          ) : null}
-
           {isSuspendedView ? (
             <div className={styles.sessionSuspendedActions}>
               <p className={styles.sessionSuspendedLabel}>Card suspended</p>
@@ -594,20 +465,6 @@ export function StudyScreen({
         </div>
       ) : null}
 
-      {explain && displayCard && explain.cardId === displayCard.id ? (
-        <StudyExplainPanel
-          cardFront={displayCard.front}
-          error={explain.error}
-          payload={explain.payload}
-          generatedAt={explain.generatedAt}
-          isCached={explain.cached}
-          isLoading={explain.isLoading}
-          unavailable={explain.unavailable}
-          onClose={handleExplainClose}
-          onRegenerate={handleExplainRegenerate}
-          onRetry={handleExplainRetry}
-        />
-      ) : null}
     </div>
   );
 }

@@ -7,14 +7,10 @@ import {
 } from "@pupil/core";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ScreenErrorBoundary } from "../../components/ErrorBoundary";
 import { StudyScreen } from "../../components/study";
-import { cancelAiRequest } from "../../lib/ai-connections";
-import { explainCard } from "../../lib/ai-explain";
-import { isAiConnectionReady } from "../../lib/ai-settings";
 import {
-  useAiSettingsQuery,
   useCardsQuery,
   useSpacesQuery,
   useStudySettingsQuery,
@@ -26,22 +22,15 @@ import {
   invalidateAfterCardMutation,
   invalidateAfterReview,
 } from "../../lib/query";
-import { isTauriRuntime } from "../../lib/runtime";
 import { getStorage } from "../../lib/storage";
-
-// One ID for every explanation: asking for a new one cancels the previous
-// request, and leaving Study cancels whatever is still running.
-const EXPLAIN_REQUEST_ID = "study-explain";
 
 function StudyPage({ targetSpaceId }: { targetSpaceId?: string }) {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [sessionKey] = useState(() => Date.now());
-  useEffect(() => () => void cancelAiRequest(EXPLAIN_REQUEST_ID), []);
   const cards = useCardsQuery().data ?? [];
   const spaces = useSpacesQuery().data ?? [];
   const studySettings = useStudySettingsQuery().data ?? { newCardsLimit: null, newCardsToday: 0 };
-  const aiSettings = useAiSettingsQuery().data ?? null;
   const targetSpace = targetSpaceId
     ? (spaces.find((space) => space.id === targetSpaceId) ?? null)
     : null;
@@ -97,10 +86,7 @@ function StudyPage({ targetSpaceId }: { targetSpaceId?: string }) {
       title="Study session unavailable"
     >
       <StudyScreen
-        aiAvailable={isTauriRuntime()}
         cards={sessionCards}
-        explainButtonEnabled={aiSettings?.explainEnabled ?? true}
-        hasAiKey={aiSettings ? isAiConnectionReady(aiSettings) : false}
         newCardsBudget={computeNewCardsBudget(
           studySettings.newCardsLimit,
           studySettings.newCardsToday,
@@ -111,14 +97,6 @@ function StudyPage({ targetSpaceId }: { targetSpaceId?: string }) {
             : void navigate({ to: "/" })
         }
         onDeleteCard={(input) => deleteMutation.mutateAsync(input)}
-        onExplainCard={(input) => explainCard({ ...input, requestId: EXPLAIN_REQUEST_ID })}
-        onMissingAiKey={() => {
-          void navigate({ to: "/settings" });
-          // Defer scroll so the settings page mounts and the section ref exists.
-          window.setTimeout(() => {
-            document.getElementById("ai")?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }, 80);
-        }}
         onReviewCard={(input) => reviewMutation.mutateAsync(input)}
         onSuspendCard={(input) => suspendMutation.mutateAsync(input)}
         onUndoReview={(input) => undoReviewMutation.mutateAsync(input)}
