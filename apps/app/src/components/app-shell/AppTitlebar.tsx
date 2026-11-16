@@ -7,7 +7,7 @@ import styles from "./AppTitlebar.module.css";
 import cardsIcon from "./symbols/book.pages.png";
 import dashboardIcon from "./symbols/building.columns.png";
 import settingsIcon from "./symbols/gear.png";
-import importIcon from "./symbols/square.and.arrow.down.png";
+import importIcon from "./symbols/pencil.tip.crop.circle.badge.plus.png";
 
 export type AppTabId = "dashboard" | "cards" | "import" | "settings";
 
