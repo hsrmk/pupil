@@ -1,7 +1,14 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { AppTitlebar } from "./AppTitlebar";
+import { type AppTab, AppTitlebar } from "./AppTitlebar";
+
+const tabs: AppTab[] = [
+  { id: "dashboard", label: "Dashboard" },
+  { id: "cards", label: "All Cards" },
+  { id: "import", label: "Import" },
+  { id: "settings", label: "Settings" },
+];
 
 beforeEach(() => {
   vi.stubGlobal(
@@ -11,6 +18,61 @@ beforeEach(() => {
       disconnect() {}
     },
   );
+});
+
+describe("AppTitlebar navigation", () => {
+  it("exposes each tab by name and marks the current page", async () => {
+    const user = userEvent.setup();
+    const onSelectTab = vi.fn();
+    render(
+      <AppTitlebar
+        activeTab="dashboard"
+        onOpenCreateDialog={vi.fn()}
+        onOpenPalette={vi.fn()}
+        onSelectTab={onSelectTab}
+        tabs={tabs}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: "Dashboard" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    for (const [name, id] of [
+      ["All Cards", "cards"],
+      ["Import", "import"],
+      ["Settings", "settings"],
+    ] as const) {
+      await user.click(screen.getByRole("button", { name }));
+      expect(onSelectTab).toHaveBeenLastCalledWith(id);
+    }
+  });
+
+  it("keeps search and the two creation actions independent", async () => {
+    const user = userEvent.setup();
+    const onOpenNewCard = vi.fn();
+    const onOpenCreateDialog = vi.fn();
+    const onOpenPalette = vi.fn();
+    render(
+      <AppTitlebar
+        activeTab="dashboard"
+        globalStreak={2}
+        onOpenNewCard={onOpenNewCard}
+        onOpenCreateDialog={onOpenCreateDialog}
+        onOpenPalette={onOpenPalette}
+        onSelectTab={vi.fn()}
+        tabs={tabs}
+      />,
+    );
+
+    expect(screen.getByText("2 day streak")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "New Card" }));
+    await user.click(screen.getByRole("button", { name: "New Space" }));
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    expect(onOpenNewCard).toHaveBeenCalledOnce();
+    expect(onOpenCreateDialog).toHaveBeenCalledOnce();
+    expect(onOpenPalette).toHaveBeenCalledOnce();
+  });
 });
 
 afterEach(() => {
