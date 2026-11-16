@@ -20,6 +20,31 @@ function Editor({ initial }: { initial: string }) {
 }
 
 describe("inline card editor", () => {
+  it.each(["ArrowLeft", "ArrowRight"])("opens an adjacent rendered equation with %s", (key) => {
+    const ref = createRef<CardEditorHandle>();
+    const value = "A $x^2$ B";
+    render(
+      <CardRichEditor
+        ref={ref}
+        value={value}
+        images={{}}
+        label="Front"
+        placeholder="Write"
+        disabled={false}
+        onChange={vi.fn()}
+        onFiles={vi.fn()}
+      />,
+    );
+    const editor = screen.getByRole("textbox", { name: "Front" });
+    act(() => {
+      ref.current?.focus();
+      ref.current?.setSelectionRange(key === "ArrowLeft" ? 7 : 2, key === "ArrowLeft" ? 7 : 2);
+    });
+    fireEvent.keyDown(editor, { key });
+    expect(editor.textContent).toContain("$x^2$");
+    expect(editor.querySelector("[data-math-index]")).toBeNull();
+    expect(ref.current?.selectionStart).toBe(key === "ArrowLeft" ? 6 : 3);
+  });
   it("renders inline and block math, reveals the source for editing, and renders it again when the caret leaves", () => {
     const ref = createRef<CardEditorHandle>();
     const value = "Before $x^2$ after $$\\frac{1}{2}$$ end";

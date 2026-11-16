@@ -232,7 +232,17 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
       remove.type = "button";
       remove.className = styles.remove;
       remove.setAttribute("aria-label", `Remove ${image.alt}`);
-      remove.textContent = "×";
+      const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+      icon.setAttribute("viewBox", "0 0 16 16");
+      icon.setAttribute("aria-hidden", "true");
+      const cross = document.createElementNS("http://www.w3.org/2000/svg", "path");
+      cross.setAttribute("d", "M4.5 4.5l7 7m0-7l-7 7");
+      cross.setAttribute("fill", "none");
+      cross.setAttribute("stroke", "currentColor");
+      cross.setAttribute("stroke-width", "1.6");
+      cross.setAttribute("stroke-linecap", "round");
+      icon.append(cross);
+      remove.append(icon);
       remove.disabled = disabled;
       remove.addEventListener("click", () => {
         wrapper.remove();
@@ -270,6 +280,34 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
       data-placeholder={placeholder}
       data-modal-autofocus={autoFocus || undefined}
       onBlur={() => setActiveMath(null)}
+      onKeyDown={(event) => {
+        if (
+          (event.key !== "ArrowLeft" && event.key !== "ArrowRight") ||
+          event.altKey ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          activeMath !== null
+        )
+          return;
+        const selection = window.getSelection();
+        if (!selection?.isCollapsed) return;
+        const offset = offsetIn(event.currentTarget, false);
+        const left = event.key === "ArrowLeft";
+        const match = [...value.matchAll(tokenPattern)].find(
+          (token) =>
+            (token[4] !== undefined || token[5] !== undefined) &&
+            (left ? token.index + token[0].length === offset : token.index === offset) &&
+            event.currentTarget.querySelector(`[data-math-index="${token.index}"]`),
+        );
+        if (!match) return;
+        event.preventDefault();
+        const delimiter = match[4] !== undefined ? 2 : 1;
+        pendingCaret.current = left
+          ? match.index + match[0].length - delimiter
+          : match.index + delimiter;
+        setActiveMath(match.index);
+      }}
       onInput={(event) => {
         const editor = event.currentTarget;
         const next = serialize(editor);
