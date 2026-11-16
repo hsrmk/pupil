@@ -18,7 +18,7 @@ cd "$project_root"
 bun run --cwd apps/app tauri build --bundles app --config '{"bundle":{"createUpdaterArtifacts":false}}'
 xcodebuild -project "$mac_dir/PupilWidget.xcodeproj" -scheme PupilWidget -configuration Release \
   -derivedDataPath "$derived" DEVELOPMENT_TEAM="$PUPIL_APPLE_TEAM_ID" \
-  CODE_SIGN_IDENTITY="$PUPIL_SIGNING_IDENTITY" PUPIL_APP_GROUP="$group" \
+  CODE_SIGN_IDENTITY="Apple Development" PUPIL_APP_GROUP="$group" \
   PRODUCT_BUNDLE_IDENTIFIER="$widget_bundle_id" build
 
 # Add the extension before signing the enclosing app. The widget only reads the
