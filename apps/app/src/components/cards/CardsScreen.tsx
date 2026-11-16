@@ -76,7 +76,7 @@ export function CardsScreen({
   const [stateFilter, setStateFilter] = useState<"all" | number>("all");
   const [sourceFilter, setSourceFilter] = useState<"all" | CardRecord["source"]>("all");
   const [spaceFilter, setSpaceFilter] = useState<string>("all");
-  const [sortMode, setSortMode] = useState<CardSortMode>("due");
+  const [sortMode, setSortMode] = useState<CardSortMode>("updated");
   const [currentPage, setCurrentPage] = useState(1);
   const cardListSectionRef = useRef<HTMLElement | null>(null);
 
