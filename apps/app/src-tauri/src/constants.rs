@@ -5,148 +5,14 @@ pub(crate) const DEVELOPER_OPEN_DEVTOOLS_MENU_ID: &str = "developer.open_devtool
 pub(crate) const DEVELOPER_RESET_ONBOARDING_MENU_ID: &str = "developer.reset_onboarding";
 #[cfg(debug_assertions)]
 pub(crate) const DEVELOPER_RESET_ONBOARDING_EVENT: &str = "developer://reset-onboarding";
-pub(crate) const AI_SETTING_BASE_URL_KEY: &str = "ai.base_url";
-pub(crate) const AI_SETTING_MODEL_KEY: &str = "ai.model";
-pub(crate) const AI_SETTING_MAX_TOKENS_KEY: &str = "ai.max_tokens";
-pub(crate) const AI_SETTING_TEMPERATURE_KEY: &str = "ai.temperature";
-pub(crate) const AI_SETTING_HAS_API_KEY_KEY: &str = "ai.has_api_key";
-pub(crate) const AI_SETTING_EXPLAIN_ENABLED_KEY: &str = "ai.explain_enabled";
-#[cfg(target_os = "macos")]
-pub(crate) const AI_SECRET_SERVICE_NAME: &str = "com.pupil.desktop.ai";
-pub(crate) const AI_SECRET_ACCOUNT_NAME: &str = "api_key";
-pub(crate) const AI_CHATGPT_SECRET_ACCOUNT_NAME: &str = "chatgpt_oauth";
-/// Which transport AI requests use: `api_key`, `chatgpt` or `claude_code`.
-pub(crate) const AI_SETTING_CONNECTION_KEY: &str = "ai.connection";
-pub(crate) const AI_SETTING_CHATGPT_MODEL_KEY: &str = "ai.chatgpt.model";
-pub(crate) const AI_SETTING_CHATGPT_STATUS_KEY: &str = "ai.chatgpt.status";
-pub(crate) const AI_SETTING_CHATGPT_EMAIL_KEY: &str = "ai.chatgpt.email";
-pub(crate) const AI_SETTING_CHATGPT_PLAN_USAGE_KEY: &str = "ai.chatgpt.plan_usage";
-/// The issued (non-secret) OAuth client ID, reused for later sign-ins.
-pub(crate) const AI_SETTING_CHATGPT_CLIENT_ID_KEY: &str = "ai.chatgpt.client_id";
-/// Opaque per-install host identifier OpenAI requires before the first sign-in.
-pub(crate) const AI_SETTING_CHATGPT_HOST_ID_KEY: &str = "ai.chatgpt.host_id";
-pub(crate) const AI_SETTING_CLAUDE_CODE_MODEL_KEY: &str = "ai.claude_code.model";
-pub(crate) const AI_SETTING_CLAUDE_CODE_PATH_KEY: &str = "ai.claude_code.path";
-/// Set after a status check finds Claude Code signed in with a subscription.
-pub(crate) const AI_SETTING_CLAUDE_CODE_READY_KEY: &str = "ai.claude_code.ready";
-pub(crate) const DEFAULT_CHATGPT_MODEL: &str = "gpt-5.6-terra";
-pub(crate) const DEFAULT_CLAUDE_CODE_MODEL: &str = "opus";
-/// A Claude Code run spawns a whole CLI session, so it gets longer than an
-/// HTTP request, but is still bounded so a stuck process is killed.
-pub(crate) const CLAUDE_CODE_TIMEOUT_SECS: u64 = 180;
-pub(crate) const CLAUDE_CODE_PROBE_TIMEOUT_SECS: u64 = 20;
-pub(crate) const CLAUDE_CODE_MAX_CONCURRENT_RUNS: usize = 3;
-pub(crate) const CLAUDE_CODE_MAX_OUTPUT_BYTES: usize = 4 * 1024 * 1024;
-pub(crate) const CHATGPT_SIGN_IN_TIMEOUT_SECS: u64 = 300;
 pub(crate) const FRONTEND_LOG_MAX_MESSAGE_CHARS: usize = 2_000;
 pub(crate) const FRONTEND_LOG_MAX_CONTEXT_CHARS: usize = 4_000;
 pub(crate) const RECENT_ACTIVITY_SESSION_GAP_MS: i64 = 30 * 60 * 1000;
 pub(crate) const RECENT_ACTIVITY_FETCH_MULTIPLIER: i64 = 50;
 pub(crate) const MIN_RECENT_ACTIVITY_FETCH_LIMIT: i64 = 200;
-/// Caps how long a single provider request may hang before the user gets an
-/// error instead of an indefinite spinner. Generation over a large topic is the
-/// slowest legitimate call, so this is deliberately generous.
-pub(crate) const AI_REQUEST_TIMEOUT_SECS: u64 = 90;
-pub(crate) const AI_CONNECT_TIMEOUT_SECS: u64 = 15;
-/// Total wall-clock budget for the explain retry loop. Without it, three
-/// sequential attempts could each burn the full request timeout.
-pub(crate) const AI_EXPLAIN_RETRY_BUDGET_SECS: u64 = 150;
-pub(crate) const DEFAULT_AI_BASE_URL: &str = "https://api.openai.com/v1";
-pub(crate) const DEFAULT_AI_MODEL: &str = "gpt-5.6-terra";
-pub(crate) const DEFAULT_AI_MAX_TOKENS: &str = "4096";
-pub(crate) const DEFAULT_AI_TEMPERATURE: &str = "0.7";
 pub(crate) const EXPLAIN_SCHEMA_VERSION: i64 = 1;
 pub(crate) const EXPLAIN_MAX_PAYLOAD_BYTES: usize = 32_000;
 pub(crate) const EXPLAIN_MAX_PARAGRAPHS: usize = 7;
 pub(crate) const EXPLAIN_MAX_NODES: usize = 8;
 pub(crate) const EXPLAIN_MAX_EDGES: usize = 10;
 pub(crate) const EXPLAIN_MAX_LABEL_LENGTH: usize = 80;
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_SNAPSHOT_FILE_NAME: &str = "pupil.hold";
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_CLIENT_NAME: &[u8] = b"pupil";
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_AI_API_KEY_RECORD_KEY: &[u8] = b"ai.api_key";
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_CHATGPT_RECORD_KEY: &[u8] = b"ai.chatgpt_oauth";
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_PASSWORD_SERVICE_NAME: &str = "com.pupil.desktop.stronghold";
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_PASSWORD_ACCOUNT_NAME: &str = "snapshot_key";
-#[cfg_attr(target_os = "macos", allow(dead_code))]
-pub(crate) const STRONGHOLD_PASSWORD_BYTES: usize = 32;
-
-pub(crate) const AI_EXPLAIN_SYSTEM_PROMPT: &str = r#"You are a patient tutor helping a learner who just got a flashcard wrong during spaced-repetition review.
-
-Your job:
-1. Identify the core concept on the back of the card.
-2. Surface any prerequisite knowledge the learner likely needs to understand it.
-3. Re-explain the answer clearly, in plain language, with one or two concrete examples or analogies when they help.
-
-Rules:
-- Return ONLY one valid JSON object. Do not wrap it in Markdown fences or add commentary.
-- The default payload is prose only. Most cards should use this exact shape:
-  {
-    "schemaVersion": 1,
-    "paragraphs": ["plain-text paragraph", "..."],
-    "visual": null
-  }
-- paragraphs must contain 3 to 7 short plain-text paragraphs. No markdown headings, bullet lists, numbered lists, HTML, URLs, or code fences.
-- Speak directly to the learner ("you"). Don't recap the card before explaining — get straight to the substance.
-- Don't apologize or hedge. Don't repeat the front question verbatim.
-
-Visuals are the exception, not the default:
-- Leave visual as null unless the answer is inherently diagrammatic AND a diagram would teach a structure that the paragraphs cannot convey as clearly.
-- If you are unsure, set visual to null. A visual that restates the prose is worse than no visual.
-- Include a visual only for one of these: an ordered process with three or more dependent steps; a causal chain; a hierarchy or taxonomy with actual parent/child structure; a state machine with named transitions; interacting parts of a system.
-- Do not include a visual for definitions, vocabulary, translations, names, dates, isolated facts, cloze answers, formulas restated as nodes, lists of properties, biographical facts, sibling terms, or any case where the diagram would merely decorate or restate the paragraphs.
-- Never emit a glossary: stacked or side-by-side concept boxes whose labels and details are just the terms being defined (for example three cards for preorder, inorder, and postorder). Those belong in the paragraphs.
-- If the only diagram you can produce is a list of labeled definitions, set visual to null. Only draw the actual object (a tree, a pipeline, a state graph), not a legend of names.
-
-When, and only when, a visual is justified, replace visual: null with exactly this shape. Omit optional fields rather than writing placeholder values:
-  {
-    "kind": "graph | tree | sequence | state | timeline | comparison",
-    "title": "short visible title",
-    "description": "short plain-text description",
-    "direction": "TB | LR",
-    "nodes": [
-      {
-        "id": "unique_ascii_id",
-        "role": "concept | process | decision | state | actor | value | annotation",
-        "label": "visible label",
-        "detail": "optional plain-text detail",
-        "groupId": "optional_group_id",
-        "order": 1
-      }
-    ],
-    "edges": [
-      {
-        "id": "unique_edge_id",
-        "source": "source_node_id",
-        "target": "target_node_id",
-        "relation": "optional visible relationship",
-        "style": "solid | dashed | bidirectional"
-      }
-    ],
-    "groups": [{ "id": "optional_group_id", "label": "Group", "nodeIds": ["node_id"] }],
-    "lanes": [{ "id": "optional_lane_id", "label": "Lane", "order": 1 }],
-    "altText": "A concise text alternative that describes the visual's teaching point."
-  }
-- Every node ID and edge ID must be unique. Each edge source/target and each group nodeId must refer to an existing node. For sequence and timeline visuals, give every node a strictly increasing order. Tree visuals must not contain a cycle.
-- A visual has at most 8 nodes, 10 relationships, and 80 characters per visible label. Use semantic nodes and relationships only; never return JSX, React Flow fields, coordinates, arbitrary HTML, raw Mermaid, URLs, or event handlers.
-- Use kind graph, tree, sequence, state, timeline, or comparison; direction must be TB or LR. Include a concise altText."#;
-
-pub(crate) const AI_SYSTEM_PROMPT: &str = r#"You are an expert flashcard author. Your job is to produce flashcards that maximize long-term retention using the principles of spaced repetition.
-
-Rules:
-1. Return ONLY a valid JSON array. No markdown fences, no commentary, no wrapper object.
-2. Each element: { "front": "...", "back": "..." }
-3. Both "front" and "back" must be non-empty strings.
-4. Keep the front concise - a single clear question, term, or cloze prompt. No compound questions.
-5. Keep the back focused - a direct answer with just enough context to disambiguate. No essays.
-6. Avoid trivial or overly broad cards. Each card should test one atomic piece of knowledge.
-7. Order cards from foundational concepts to more advanced topics.
-8. Do not number or prefix the cards.
-9. For cloze style: front uses "___" for the blank, back gives the missing term plus a one-sentence explanation.
-10. Avoid duplicating information across cards. Each card should cover a distinct fact or concept.
-11. Assume that the cards may not be presented in order, therefore each cards should not depend on eachother"#;

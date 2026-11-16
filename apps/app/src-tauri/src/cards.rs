@@ -420,35 +420,7 @@ fn upsert_study_day(
     Ok(())
 }
 
-pub(crate) struct CardExplanationSource {
-    pub(crate) front: String,
-    pub(crate) back: String,
-    pub(crate) explanation_generated_at: Option<i64>,
-    pub(crate) explanation_payload: Option<String>,
-}
-
-pub(crate) fn fetch_card_explanation_source(
-    connection: &Connection,
-    id: &str,
-) -> rusqlite::Result<CardExplanationSource> {
-    connection.query_row(
-        "
-        SELECT front, back, explanation_generated_at, explanation_payload
-        FROM cards
-        WHERE id = ?1
-        ",
-        [id],
-        |row| {
-            Ok(CardExplanationSource {
-                front: row.get(0)?,
-                back: row.get(1)?,
-                explanation_generated_at: row.get(2)?,
-                explanation_payload: row.get(3)?,
-            })
-        },
-    )
-}
-
+#[cfg(test)]
 pub(crate) fn save_card_explanation(
     connection: &Connection,
     id: &str,

@@ -7,9 +7,8 @@ use crate::app::{
     app_data_dir, database_path, open_app_connection, open_connection, BootstrapStatus,
 };
 use crate::cards::{
-    create_card_row, delete_card_row, list_card_summaries,
-    review_card_row, suspend_card_row, undo_review_card_row,
-    update_card_row,
+    create_card_row, delete_card_row, list_card_summaries, review_card_row, suspend_card_row,
+    undo_review_card_row, update_card_row,
 };
 use crate::constants::{FRONTEND_LOG_MAX_CONTEXT_CHARS, FRONTEND_LOG_MAX_MESSAGE_CHARS};
 use crate::error::{AppError, AppResult};
@@ -30,9 +29,8 @@ use crate::spaces::{create_space_row, delete_space_row, list_space_summaries, re
 use crate::study_queue::load_study_queue_snapshot;
 use crate::tray;
 use crate::types::{
-    BootstrapState, CardSummary, CreateCardInput, DashboardStats,
-    ExportDataResult, FrontendLogInput, ImportAnkiInput,
-    ImportAnkiResult, RecentActivityEntry, ReviewCardInput,
+    BootstrapState, CardSummary, CreateCardInput, DashboardStats, ExportDataResult,
+    FrontendLogInput, ImportAnkiInput, ImportAnkiResult, RecentActivityEntry, ReviewCardInput,
     SettingsDataSummary, SpaceStats, SpaceSummary, StudyQueueSnapshot, StudySettingsState,
     SuspendCardInput, UndoReviewCardInput, UpdateCardInput,
 };

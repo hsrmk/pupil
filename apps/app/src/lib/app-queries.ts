@@ -41,7 +41,3 @@ export function useSpacesQuery() {
 export function useStudySettingsQuery() {
   return useCoreQuery(appQueryKeys.studySettings, () => getStorage().getStudySettings());
 }
-
-export function useAiSettingsQuery() {
-  return useCoreQuery(appQueryKeys.aiSettings, () => loadAiSettings());
-}

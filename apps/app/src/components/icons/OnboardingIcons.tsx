@@ -31,22 +31,6 @@ export function ImportDeckIcon() {
   );
 }
 
-export function AiGenerateIcon() {
-  return (
-    <svg
-      viewBox="0 0 20 20"
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="1.5"
-    >
-      <path d="M10 2.5l1.1 3.6a1.1 1.1 0 00.74.74L15.5 8l-3.66 1.16a1.1 1.1 0 00-.74.74L10 13.5 8.9 9.9a1.1 1.1 0 00-.74-.74L4.5 8l3.66-1.16a1.1 1.1 0 00.74-.74L10 2.5z" />
-      <path d="M15.75 12.25l.47 1.54a.8.8 0 00.53.53l1.54.47-1.54.47a.8.8 0 00-.53.53l-.47 1.54-.47-1.54a.8.8 0 00-.53-.53l-1.54-.47 1.54-.47a.8.8 0 00.53-.53l.47-1.54z" />
-    </svg>
-  );
-}
-
 export function ExploreAppIcon() {
   return (
     <svg

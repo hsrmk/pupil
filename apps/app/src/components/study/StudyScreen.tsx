@@ -464,7 +464,6 @@ export function StudyScreen({
           )}
         </div>
       ) : null}
-
     </div>
   );
 }

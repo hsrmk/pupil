@@ -208,10 +208,3 @@ impl From<tauri::Error> for AppError {
     }
 }
 
-#[cfg(target_os = "macos")]
-/// Converts macOS keyring integration failures into the storage error bucket.
-impl From<keyring::Error> for AppError {
-    fn from(error: keyring::Error) -> Self {
-        Self::storage_message(error.to_string())
-    }
-}

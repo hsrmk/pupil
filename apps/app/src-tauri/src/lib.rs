@@ -31,9 +31,9 @@ use crate::commands::{
     create_card, create_space, delete_card, delete_space, export_database_copy,
     export_review_logs_csv, get_bootstrap_state, get_dashboard_stats, get_settings_data_summary,
     get_study_queue_snapshot, get_study_settings, import_anki_cards, list_cards,
-    list_recent_activity, list_space_stats, list_spaces, log_frontend_event,
-    refresh_tray_status, rename_space, reset_all_data, review_card, save_study_settings,
-    suspend_card, undo_review_card, update_card,
+    list_recent_activity, list_space_stats, list_spaces, log_frontend_event, refresh_tray_status,
+    rename_space, reset_all_data, review_card, save_study_settings, suspend_card, undo_review_card,
+    update_card,
 };
 use crate::commands::{load_card_image, save_card_image};
 #[cfg(debug_assertions)]
@@ -103,8 +103,7 @@ pub fn run() {
         .bind_address("127.0.0.1")
         .build();
 
-    let builder = tauri::Builder::default()
-        .menu(build_app_menu);
+    let builder = tauri::Builder::default().menu(build_app_menu);
 
     #[cfg(feature = "mcp-bridge")]
     let builder = builder.plugin(mcp_plugin);

@@ -198,8 +198,7 @@ pub(crate) fn load_today_new_card_count(connection: &Connection) -> rusqlite::Re
     )
 }
 
-pub(crate) fn reset_all_data_rows(app: &AppHandle, connection: &mut Connection) -> AppResult<()> {
-
+pub(crate) fn reset_all_data_rows(_app: &AppHandle, connection: &mut Connection) -> AppResult<()> {
     let transaction = connection.transaction()?;
     transaction.execute_batch(
         "

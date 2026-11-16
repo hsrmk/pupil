@@ -10,11 +10,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { ScreenErrorBoundary } from "../../components/ErrorBoundary";
 import { StudyScreen } from "../../components/study";
-import {
-  useCardsQuery,
-  useSpacesQuery,
-  useStudySettingsQuery,
-} from "../../lib/app-queries";
+import { useCardsQuery, useSpacesQuery, useStudySettingsQuery } from "../../lib/app-queries";
 import { toAppError } from "../../lib/errors";
 import { notifyError } from "../../lib/notifications";
 import {
