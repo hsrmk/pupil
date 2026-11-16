@@ -415,6 +415,37 @@
   border-color: var(--border-hover);
 }
 
+.viewSwitch {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--space-0-5);
+  height: 36px;
+  padding: var(--space-0-5);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg-subtle);
+}
+
+.viewSwitch button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+
+.viewSwitch button:hover, .viewSwitch button:focus-visible { color: var(--text-primary); }
+.viewSwitch button:focus-visible { outline: 2px solid var(--text-secondary); outline-offset: -2px; }
+.viewSwitch button[aria-pressed="true"] { background: var(--bg-elevated); color: var(--text-primary); }
+.viewSwitch svg { width: 15px; height: 15px; }
+
 .sortSelectWrap {
   display: inline-flex;
   align-items: center;

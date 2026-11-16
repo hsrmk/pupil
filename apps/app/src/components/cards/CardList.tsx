@@ -185,7 +185,7 @@ export function CardList({
   );
 }
 
-function formatState(state: number): string {
+export function formatState(state: number): string {
   switch (state) {
     case 1:
       return "Learning";
@@ -222,7 +222,10 @@ function formatSource(source: CardRecord["source"]): string {
   }
 }
 
-function formatDue(due: number): { label: string; variant: "none" | "overdue" | "upcoming" } {
+export function formatDue(due: number): {
+  label: string;
+  variant: "none" | "overdue" | "upcoming";
+} {
   const delta = due - Date.now();
 
   if (delta <= 0) {

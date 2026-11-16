@@ -5,8 +5,10 @@ import { SpaceDetailsTitlebar } from "../app-shell";
 import { Button } from "../Button";
 import { CardFace } from "../cards/CardFace";
 import { CardFormPanel } from "../cards/CardFormPanel";
+import { CardGrid } from "../cards/CardGrid";
 import { CardList } from "../cards/CardList";
 import { CARD_SORT_OPTIONS, type CardSortMode, sortCardsForList } from "../cards/cardSort";
+import { GridIcon } from "../icons/GridIcon";
 import { ImportIcon } from "../icons/ImportIcon";
 import { PlusIcon } from "../icons/PlusIcon";
 import { SearchIcon } from "../icons/SearchIcon";
@@ -85,6 +87,7 @@ export function SpaceDetailsScreen({
   const [renameError, setRenameError] = useState<string | null>(null);
   const [renameName, setRenameName] = useState(space.name);
   const [searchQuery, setSearchQuery] = useState("");
+  const [cardView, setCardView] = useState<"list" | "grid">("list");
   const [sortMode, setSortMode] = useState<CardSortMode>("due");
   const [currentPage, setCurrentPage] = useState(1);
   const cardListSectionRef = useRef<HTMLElement | null>(null);
@@ -569,6 +572,41 @@ export function SpaceDetailsScreen({
               />
             </div>
 
+            <div className={styles.viewSwitch} role="group" aria-label="Card view">
+              <button
+                type="button"
+                aria-label="List view"
+                title="List view"
+                aria-pressed={cardView === "list"}
+                onClick={() => {
+                  setCardView("list");
+                  setExpandedCardId(null);
+                }}
+              >
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  aria-hidden="true"
+                >
+                  <path d="M2 4h12M2 8h12M2 12h12" />
+                </svg>
+              </button>
+              <button
+                type="button"
+                aria-label="Grid view"
+                title="Grid view"
+                aria-pressed={cardView === "grid"}
+                onClick={() => {
+                  setCardView("grid");
+                  setExpandedCardId(null);
+                }}
+              >
+                <GridIcon />
+              </button>
+            </div>
+
             <label className={styles.sortSelectWrap}>
               <SortIcon />
               <span className={styles.sortSelectLabel}>Sort</span>
@@ -586,15 +624,24 @@ export function SpaceDetailsScreen({
             </label>
           </div>
 
-          <CardList
-            cards={paginatedCards}
-            expandedCardId={expandedCardId}
-            mode="space"
-            onDeleteCard={(cardId) => void handleDelete(cardId)}
-            onEditCard={handleEditCard}
-            onSuspendCard={(cardId, suspended) => void onSuspendCard({ id: cardId, suspended })}
-            onToggleExpand={handleToggleExpand}
-          />
+          {cardView === "list" ? (
+            <CardList
+              cards={paginatedCards}
+              expandedCardId={expandedCardId}
+              mode="space"
+              onDeleteCard={(cardId) => void handleDelete(cardId)}
+              onEditCard={handleEditCard}
+              onSuspendCard={(cardId, suspended) => void onSuspendCard({ id: cardId, suspended })}
+              onToggleExpand={handleToggleExpand}
+            />
+          ) : (
+            <CardGrid
+              cards={paginatedCards}
+              onDeleteCard={(cardId) => void handleDelete(cardId)}
+              onEditCard={handleEditCard}
+              onSuspendCard={(cardId, suspended) => void onSuspendCard({ id: cardId, suspended })}
+            />
+          )}
           <Pagination
             currentPage={safePage}
             onPageChange={handlePageChange}
