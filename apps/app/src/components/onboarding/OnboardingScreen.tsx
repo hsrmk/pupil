@@ -1,24 +1,16 @@
 import { EyeLogo } from "../brand";
-import { AiGenerateIcon, CreateSpaceIcon, ImportDeckIcon } from "../icons/OnboardingIcons";
+import { CreateSpaceIcon, ImportDeckIcon } from "../icons/OnboardingIcons";
 import styles from "./Onboarding.module.css";
 import { OnboardingPathCard } from "./OnboardingPathCard";
 import { OnboardingQuickStart } from "./OnboardingQuickStart";
 
 type OnboardingScreenProps = {
   onCreateSpace: () => void;
-  onGenerateWithAi: () => void;
   onImport: () => void;
-  onOpenSettings: () => void;
   onSkip: () => void;
 };
 
-export function OnboardingScreen({
-  onCreateSpace,
-  onGenerateWithAi,
-  onImport,
-  onOpenSettings,
-  onSkip,
-}: OnboardingScreenProps) {
+export function OnboardingScreen({ onCreateSpace, onImport, onSkip }: OnboardingScreenProps) {
   return (
     <>
       <div className={styles.welcomeTitlebar} data-window-drag />
@@ -32,8 +24,8 @@ export function OnboardingScreen({
           <div className={styles.welcomeHeroWordmark}>pupil</div>
 
           <p className={styles.welcomeHeroDesc}>
-            Local-first flashcards with spaced repetition and AI generation. Everything stays on
-            your machine. Pick a starting point below.
+            Local-first flashcards with spaced repetition. Everything stays on your machine. Pick a
+            starting point below.
           </p>
         </div>
 
@@ -61,15 +53,6 @@ export function OnboardingScreen({
               onClick={onImport}
               title="Import from Anki"
             />
-
-            <OnboardingPathCard
-              badge="Fastest"
-              ctaLabel="Generate"
-              description="Give a topic and difficulty. Pupil will generate a deck in seconds once AI generation is enabled."
-              icon={<AiGenerateIcon />}
-              onClick={onGenerateWithAi}
-              title="Generate with AI"
-            />
           </div>
         </div>
 
@@ -81,17 +64,6 @@ export function OnboardingScreen({
 
         <div className={styles.welcomeQuickstart}>
           <OnboardingQuickStart onClick={onSkip} />
-        </div>
-
-        <div className={styles.welcomeBottom}>
-          <p className={styles.welcomeApiHint}>
-            AI generation uses your ChatGPT or Claude plan, or an API key from any compatible
-            provider. You can connect one later in{" "}
-            <button className={styles.welcomeInlineLink} onClick={onOpenSettings} type="button">
-              Settings
-            </button>
-            . Everything else works without it.
-          </p>
         </div>
       </div>
     </>

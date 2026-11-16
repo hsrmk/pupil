@@ -50,7 +50,6 @@ describe("space card views", () => {
         onCreateCard={vi.fn()}
         onDeleteCard={vi.fn()}
         onDeleteSpace={vi.fn()}
-        onOpenAiGenerate={vi.fn()}
         onOpenImport={vi.fn()}
         onRenameSpace={vi.fn()}
         onStartStudy={vi.fn()}

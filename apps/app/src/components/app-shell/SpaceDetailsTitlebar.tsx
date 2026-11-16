@@ -6,14 +6,12 @@ import { EditIcon } from "../icons/EditIcon";
 import { ImportIcon } from "../icons/ImportIcon";
 import { MoreVerticalIcon } from "../icons/MoreVerticalIcon";
 import { PlusIcon } from "../icons/PlusIcon";
-import { SparklesIcon } from "../icons/SparklesIcon";
 import { Menu, MenuItem } from "../Menu";
 import styles from "./AppTitlebar.module.css";
 
 type SpaceDetailsTitlebarProps = {
   onBack: () => void;
   onOpenDeleteDialog: () => void;
-  onOpenAiGenerate: () => void;
   onOpenImport: () => void;
   onOpenNewCard: () => void;
   onOpenRenameDialog: () => void;
@@ -23,7 +21,6 @@ type SpaceDetailsTitlebarProps = {
 export function SpaceDetailsTitlebar({
   onBack,
   onOpenDeleteDialog,
-  onOpenAiGenerate,
   onOpenImport,
   onOpenNewCard,
   onOpenRenameDialog,
@@ -53,10 +50,6 @@ export function SpaceDetailsTitlebar({
         <Button onClick={onOpenNewCard} size="compact" variant="outline">
           <PlusIcon />
           New Card
-        </Button>
-        <Button onClick={onOpenAiGenerate} size="compact" variant="outline">
-          <SparklesIcon />
-          AI Generate
         </Button>
         <Button onClick={onOpenImport} size="compact" variant="outline">
           <ImportIcon />

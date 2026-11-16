@@ -133,9 +133,6 @@ export function SpaceDetailsPage() {
           await deleteCardMutation.mutateAsync(input);
         }}
         onDeleteSpace={() => deleteSpaceMutation.mutateAsync()}
-        onOpenAiGenerate={() =>
-          void navigate({ to: "/spaces/$spaceId/generate", params: { spaceId } })
-        }
         onOpenImport={() => void navigate({ to: "/spaces/$spaceId/import", params: { spaceId } })}
         onRenameSpace={async (input) => {
           await renameSpaceMutation.mutateAsync(input.name);

@@ -6,7 +6,6 @@ import styles from "./CommandPalette.module.css";
 type CommandPaletteProps = {
   cards: CardRecord[];
   onClose: () => void;
-  onOpenAiGenerate: () => void;
   onOpenCreateDialog: () => void;
   onOpenImport: () => void;
   onOpenSettings: () => void;
@@ -119,7 +118,6 @@ function highlight(text: string, query: string): React.ReactNode {
 export function CommandPalette({
   cards,
   onClose,
-  onOpenAiGenerate,
   onOpenCreateDialog,
   onOpenImport,
   onOpenSettings,
@@ -168,16 +166,6 @@ export function CommandPalette({
           },
         },
         {
-          id: "ai-generate",
-          title: "AI Generate",
-          subtitle: "Generate cards with AI",
-          icon: "sparkle",
-          onSelect() {
-            onClose();
-            onOpenAiGenerate();
-          },
-        },
-        {
           id: "import",
           title: "Import .apkg",
           subtitle: "Import from Anki",
@@ -190,7 +178,7 @@ export function CommandPalette({
         {
           id: "settings",
           title: "Settings",
-          subtitle: "AI provider, data, shortcuts",
+          subtitle: "Appearance, data, shortcuts",
           icon: "settings",
           shortcut: "⌘,",
           onSelect() {

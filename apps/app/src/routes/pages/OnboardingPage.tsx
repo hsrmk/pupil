@@ -17,17 +17,9 @@ export function OnboardingPage() {
         handleDismissOnboarding();
         openCreateDialog();
       }}
-      onGenerateWithAi={() => {
-        handleDismissOnboarding();
-        void navigate({ to: "/generate" });
-      }}
       onImport={() => {
         handleDismissOnboarding();
         void navigate({ to: "/import" });
-      }}
-      onOpenSettings={() => {
-        handleDismissOnboarding();
-        void navigate({ to: "/settings" });
       }}
       onSkip={() => {
         handleDismissOnboarding();

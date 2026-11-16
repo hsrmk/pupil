@@ -13,7 +13,6 @@ import { ImportIcon } from "../icons/ImportIcon";
 import { PlusIcon } from "../icons/PlusIcon";
 import { SearchIcon } from "../icons/SearchIcon";
 import { SortIcon } from "../icons/SortIcon";
-import { SparklesIcon } from "../icons/SparklesIcon";
 import { Pagination } from "../Pagination";
 import { DeleteSpaceDialog } from "./DeleteSpaceDialog";
 import { RenameSpaceDialog } from "./RenameSpaceDialog";
@@ -40,7 +39,6 @@ type SpaceDetailsScreenProps = {
   }) => Promise<void>;
   onDeleteCard: (input: { id: string }) => Promise<void>;
   onDeleteSpace: () => Promise<void>;
-  onOpenAiGenerate: () => void;
   onOpenImport: () => void;
   onRenameSpace: (input: { name: string }) => Promise<void>;
   onStartStudy: () => void;
@@ -65,7 +63,6 @@ export function SpaceDetailsScreen({
   onCreateCard,
   onDeleteCard,
   onDeleteSpace,
-  onOpenAiGenerate,
   onOpenImport,
   onRenameSpace,
   onStartStudy,
@@ -298,7 +295,6 @@ export function SpaceDetailsScreen({
       <SpaceDetailsTitlebar
         onBack={onBack}
         onOpenDeleteDialog={() => setIsDeleteDialogOpen(true)}
-        onOpenAiGenerate={onOpenAiGenerate}
         onOpenImport={onOpenImport}
         onOpenNewCard={handleOpenNewCard}
         onOpenRenameDialog={handleOpenRenameDialog}
@@ -550,10 +546,6 @@ export function SpaceDetailsScreen({
               <Button onClick={handleOpenNewCard} variant="ghost">
                 <PlusIcon />
                 New Card
-              </Button>
-              <Button onClick={onOpenAiGenerate} variant="ghost">
-                <SparklesIcon />
-                AI Generate
               </Button>
               <Button onClick={onOpenImport} variant="ghost">
                 <ImportIcon />

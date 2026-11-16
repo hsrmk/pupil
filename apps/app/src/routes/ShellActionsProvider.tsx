@@ -61,7 +61,6 @@ export function ShellActionsProvider({ children }: ShellActionsProviderProps) {
         <CommandPalette
           cards={commandPalette.cards}
           onClose={commandPalette.close}
-          onOpenAiGenerate={commandPalette.onOpenAiGenerate}
           onOpenCreateDialog={commandPalette.onOpenCreateDialog}
           onOpenImport={commandPalette.onOpenImport}
           onOpenSettings={commandPalette.onOpenSettings}

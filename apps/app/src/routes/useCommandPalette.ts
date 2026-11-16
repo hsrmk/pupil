@@ -60,7 +60,6 @@ export function useCommandPalette({ onOpenCreateDialog }: CommandPaletteInput) {
     cards,
     close,
     isOpen,
-    onOpenAiGenerate: () => void navigate({ to: "/generate" }),
     onOpenCreateDialog: openCreateDialog,
     onOpenImport: () => void navigate({ to: "/import" }),
     onOpenSettings: () => void navigate({ to: "/settings" }),
