@@ -47,11 +47,21 @@ export function SpaceDetailsTitlebar({
       </div>
 
       <div className={styles.titlebarRight}>
-        <Button onClick={onOpenNewCard} size="compact" variant="outline">
+        <Button
+          className={styles.spaceNewCard}
+          onClick={onOpenNewCard}
+          size="compact"
+          variant="outline"
+        >
           <PlusIcon />
           New Card
         </Button>
-        <Button onClick={onOpenImport} size="compact" variant="outline">
+        <Button
+          className={styles.spaceImport}
+          onClick={onOpenImport}
+          size="compact"
+          variant="outline"
+        >
           <ImportIcon />
           Import
         </Button>

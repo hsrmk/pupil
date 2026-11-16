@@ -26,6 +26,7 @@ const tabIcons: Record<AppTabId, string> = {
 type AppTitlebarProps = {
   activeTab: AppTabId;
   globalStreak?: number | null;
+  mobileNavigationOnly?: boolean;
   onInstallUpdate?: () => void;
   onOpenCreateDialog: () => void;
   onOpenNewCard?: () => void;
@@ -39,6 +40,7 @@ type AppTitlebarProps = {
 export function AppTitlebar({
   activeTab,
   globalStreak,
+  mobileNavigationOnly = false,
   onInstallUpdate,
   onOpenCreateDialog,
   onOpenNewCard,
@@ -90,7 +92,10 @@ export function AppTitlebar({
   }, [activeTab]);
 
   return (
-    <div className={styles.titlebar} data-window-drag>
+    <div
+      className={`${styles.titlebar}${mobileNavigationOnly ? ` ${styles.mobileNavigationOnly}` : ""}`}
+      data-window-drag
+    >
       <div className={styles.titlebarLeft}>
         <div className={styles.titlebarLogo}>
           <EyeLogo />
@@ -140,7 +145,9 @@ export function AppTitlebar({
           </Button>
         ) : null}
         {globalStreak !== undefined && globalStreak !== null ? (
-          <div className={styles.titlebarStatus}>
+          <div
+            className={`${styles.titlebarStatus}${activeTab !== "dashboard" ? ` ${styles.mobileOnlyStatus}` : ""}`}
+          >
             <span className="streak-dot" />
             {globalStreak > 0 ? `${globalStreak} day streak` : "No streak yet"}
           </div>

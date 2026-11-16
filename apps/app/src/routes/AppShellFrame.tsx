@@ -55,10 +55,11 @@ export function AppShellFrame({
       {pathname.startsWith("/study") ? null : <RulersOverlay />}
 
       <div className={shellStyles.dashboardShell}>
-        {activeTab ? (
+        {activeTab || pathname.startsWith("/spaces/") ? (
           <AppTitlebar
-            activeTab={activeTab.id}
+            activeTab={activeTab?.id ?? "dashboard"}
             globalStreak={globalStreak}
+            mobileNavigationOnly={!activeTab}
             onInstallUpdate={updateActionLabel ? () => void install() : undefined}
             onOpenCreateDialog={onOpenCreateDialog}
             onOpenNewCard={onOpenNewCard}

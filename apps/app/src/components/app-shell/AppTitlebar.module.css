@@ -32,6 +32,10 @@
   display: none;
 }
 
+.mobileNavigationOnly {
+  display: none;
+}
+
 .titlebarLeft {
   gap: var(--space-5);
   min-width: 0;
@@ -119,6 +123,10 @@
   font-size: 11.5px;
   letter-spacing: 0.02em;
   white-space: nowrap;
+}
+
+.mobileOnlyStatus {
+  display: none;
 }
 
 .backBtn {
@@ -210,7 +218,21 @@
   .createActions { position: fixed; z-index: 9; right: var(--space-4); bottom: calc(90px + env(safe-area-inset-bottom)); flex-direction: column; align-items: flex-end; }
   .createActions button { background: rgba(38, 38, 42, 0.92); box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35); }
   .titlebarStatus { margin-right: 0; font-size: 10px; padding: 0 var(--space-2); }
-  .spaceTitlebar { flex-wrap: wrap; }
-  .spaceTitlebar .titlebarLeft { flex: 1 1 100%; }
+  .mobileOnlyStatus { display: inline-flex; }
+  .titlebar.mobileNavigationOnly { display: block; position: static; min-height: 0; height: 0; padding: 0; border: 0; }
+  .mobileNavigationOnly .titlebarLogo, .mobileNavigationOnly .titlebarRight { display: none; }
+  .spaceTitlebar { flex-wrap: nowrap; }
+  .spaceTitlebar .titlebarLeft { flex: 1 1 auto; overflow: hidden; }
+  .spaceTitlebar .titlebarLogo, .spaceImport { display: none; }
+  .spaceTitlebar .breadcrumbName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .spaceTitlebar .backBtn { flex-shrink: 0; }
   .spaceTitlebar .titlebarRight { margin-left: auto; }
+  .spaceNewCard {
+    position: fixed;
+    z-index: 9;
+    right: var(--space-4);
+    bottom: calc(90px + env(safe-area-inset-bottom));
+    background: rgba(38, 38, 42, 0.92);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  }
 }

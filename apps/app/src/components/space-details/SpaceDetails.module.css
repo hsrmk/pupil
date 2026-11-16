@@ -518,6 +518,9 @@
 }
 
 @media (max-width: 640px) {
+  .toolbarTopRight {
+    display: none;
+  }
   .listControls {
     align-items: stretch;
     flex-direction: column;
