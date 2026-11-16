@@ -16,6 +16,18 @@ describe("escapeHtml", () => {
 });
 
 describe("renderCardMarkup", () => {
+  it("renders inline and display math alongside Markdown", () => {
+    const rendered = renderCardMarkup("**Area:** $A = \\pi r^2$\n$$\\frac{1}{2}$$", "cloze");
+    expect(rendered).toContain("<strong>Area:</strong>");
+    expect(rendered).toContain("katex-display");
+    expect(rendered).toContain("katex");
+  });
+
+  it("leaves invalid math visible and does not render math inside code", () => {
+    expect(renderCardMarkup("$\\notacommand$", "cloze")).toBe("$\\notacommand$");
+    expect(renderCardMarkup("`$x$`", "cloze")).toBe("<code>$x$</code>");
+  });
+
   it("renders a script tag as inert text rather than an element", () => {
     const rendered = renderCardMarkup("<script>alert(1)</script>", "cloze");
 
