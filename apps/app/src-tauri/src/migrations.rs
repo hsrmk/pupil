@@ -47,4 +47,9 @@ pub(crate) const MIGRATIONS: &[Migration] = &[
         requires_backup: false,
         action: MigrationAction::Sql(include_str!("../migrations/0008_card_images.sql")),
     },
+    Migration {
+        id: "0009_sync_outbox",
+        requires_backup: true,
+        action: MigrationAction::Sql(include_str!("../migrations/0009_sync_outbox.sql")),
+    },
 ];
