@@ -534,13 +534,17 @@
     flex: 1;
   }
 
-  .reviewsHeader,
-  .reviewRow {
-    grid-template-columns: 1fr 70px 80px;
+  .reviewsTable {
+    overflow-x: auto;
+    scrollbar-width: none;
   }
 
-  .reviewsHeader .colRight,
-  .reviewTime {
+  .reviewsTable::-webkit-scrollbar {
     display: none;
+  }
+
+  .reviewsHeader,
+  .reviewRow {
+    min-width: 480px;
   }
 }
