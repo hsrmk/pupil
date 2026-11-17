@@ -20,6 +20,7 @@ type ModalProps = {
   isOpen: boolean;
   onBackdropClick?: () => void;
   onClose: () => void;
+  panelAccessory?: ReactNode;
   overlayClassName?: string;
   panelClassName?: string;
   size?: "medium" | "small" | "wide";
@@ -36,6 +37,15 @@ const FOCUSABLE_SELECTOR = [
   '[tabindex]:not([tabindex="-1"])',
 ].join(",");
 
+function focusableElements(panel: HTMLElement | null): HTMLElement[] {
+  return Array.from(panel?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR) ?? []).filter(
+    (element) => {
+      const style = window.getComputedStyle(element);
+      return style.display !== "none" && style.visibility !== "hidden";
+    },
+  );
+}
+
 // Stays mounted through the exit animation; "opening"/"closing" drive the
 // keyframes in Modal.module.css and settle on the panel's animationend.
 type ModalPhase = "opening" | "open" | "closing" | "closed";
@@ -50,6 +60,15 @@ function usesPhoneLayout(): boolean {
       window.matchMedia("(max-height: 500px) and (orientation: landscape) and (pointer: coarse)")
         .matches)
   );
+}
+
+function revealFocusedField(panel: HTMLElement, focused: HTMLElement): void {
+  if (!focused.isConnected || document.activeElement !== focused) return;
+  const fieldRect = focused.getBoundingClientRect();
+  const panelRect = panel.getBoundingClientRect();
+  if (fieldRect.bottom > panelRect.bottom || fieldRect.top < panelRect.top) {
+    panel.scrollTop += fieldRect.top - panelRect.top - 16;
+  }
 }
 
 function settlePhase(phase: ModalPhase): ModalPhase {
@@ -73,6 +92,7 @@ export function Modal({
   isOpen,
   onBackdropClick,
   onClose,
+  panelAccessory,
   overlayClassName,
   panelClassName,
   size = "small",
@@ -117,8 +137,7 @@ export function Modal({
     const focusFrame = window.requestAnimationFrame(() => {
       const autofocusElement =
         panelRef.current?.querySelector<HTMLElement>("[data-modal-autofocus]");
-      const firstFocusableElement =
-        panelRef.current?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      const firstFocusableElement = focusableElements(panelRef.current)[0];
       (autofocusElement ?? firstFocusableElement ?? panelRef.current)?.focus();
     });
 
@@ -151,14 +170,35 @@ export function Modal({
       }
     };
 
+    let resizeTimer = 0;
+    const handleResize = () => {
+      updateViewport();
+      window.clearTimeout(resizeTimer);
+      if (usesPhoneLayout()) {
+        resizeTimer = window.setTimeout(() => {
+          const panel = panelRef.current;
+          const focused = document.activeElement;
+          if (
+            panel &&
+            focused instanceof HTMLElement &&
+            focused.matches('input, textarea, [contenteditable="true"]') &&
+            panel.contains(focused)
+          ) {
+            revealFocusedField(panel, focused);
+          }
+        }, 450);
+      }
+    };
+
     updateViewport();
-    viewport.addEventListener("resize", updateViewport);
+    viewport.addEventListener("resize", handleResize);
     viewport.addEventListener("scroll", updateViewport);
-    window.addEventListener("resize", updateViewport);
+    window.addEventListener("resize", handleResize);
     return () => {
-      viewport.removeEventListener("resize", updateViewport);
+      window.clearTimeout(resizeTimer);
+      viewport.removeEventListener("resize", handleResize);
       viewport.removeEventListener("scroll", updateViewport);
-      window.removeEventListener("resize", updateViewport);
+      window.removeEventListener("resize", handleResize);
     };
   }, [isOpen, phase]);
 
@@ -191,16 +231,16 @@ export function Modal({
       return;
     }
 
-    const focusableElements = panelRef.current?.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR);
+    const focusable = focusableElements(panelRef.current);
 
-    if (!focusableElements || focusableElements.length === 0) {
+    if (focusable.length === 0) {
       event.preventDefault();
       panelRef.current?.focus();
       return;
     }
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const firstElement = focusable[0];
+    const lastElement = focusable[focusable.length - 1];
 
     if (event.shiftKey && document.activeElement === firstElement) {
       event.preventDefault();
@@ -223,12 +263,7 @@ export function Modal({
     }
 
     window.setTimeout(() => {
-      if (!focused.isConnected || document.activeElement !== focused) return;
-      const fieldRect = focused.getBoundingClientRect();
-      const panelRect = panel.getBoundingClientRect();
-      if (fieldRect.bottom > panelRect.bottom || fieldRect.top < panelRect.top) {
-        panel.scrollTop += fieldRect.top - panelRect.top - 16;
-      }
+      revealFocusedField(panel, focused);
     }, 450);
   }
 
@@ -262,6 +297,7 @@ export function Modal({
         role="dialog"
         tabIndex={-1}
       >
+        {panelAccessory}
         {childrenRef.current}
       </div>
     </div>,

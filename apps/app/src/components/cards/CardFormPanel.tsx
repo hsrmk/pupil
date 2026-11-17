@@ -170,6 +170,17 @@ export function CardFormPanel({
       isOpen={isOpen}
       onBackdropClick={handleBackdropClick}
       onClose={onClose}
+      panelAccessory={
+        <button
+          aria-label="Close"
+          className={styles.landscapeCloseButton}
+          disabled={isImportingImage}
+          onClick={onClose}
+          type="button"
+        >
+          <CloseIcon />
+        </button>
+      }
       overlayClassName={styles.cardBackdrop}
       panelClassName={`${styles.cardDialog}${isSuccessPulsing ? ` ${styles.successPulse}` : ""}`}
       size="wide"

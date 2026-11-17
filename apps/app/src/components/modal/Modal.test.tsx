@@ -1,4 +1,4 @@
-import { act, cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { Modal } from "./Modal";
 
@@ -69,4 +69,54 @@ it("uses the phone viewport for a short landscape touchscreen", () => {
 
   const overlay = screen.getByRole("dialog", { name: "Landscape dialog" }).parentElement;
   expect(overlay).toHaveStyle({ height: "220px" });
+});
+
+it("reveals an already focused field when the viewport shrinks", () => {
+  vi.useFakeTimers();
+  const viewport = Object.assign(new EventTarget(), { height: 500, offsetTop: 0 });
+  vi.stubGlobal("visualViewport", viewport);
+  vi.stubGlobal("innerWidth", 844);
+  vi.stubGlobal("matchMedia", () => ({ matches: true }));
+
+  render(
+    <Modal ariaLabel="Space" isOpen onClose={() => {}}>
+      <input aria-label="Name" />
+    </Modal>,
+  );
+
+  const panel = screen.getByRole("dialog", { name: "Space" });
+  const field = screen.getByRole("textbox", { name: "Name" });
+  vi.spyOn(panel, "getBoundingClientRect").mockReturnValue({ top: 0, bottom: 300 } as DOMRect);
+  const fieldRect = vi.spyOn(field, "getBoundingClientRect");
+  fieldRect.mockReturnValue({ top: 20, bottom: 60 } as DOMRect);
+  act(() => {
+    field.focus();
+    vi.advanceTimersByTime(450);
+  });
+  expect(panel.scrollTop).toBe(0);
+
+  fieldRect.mockReturnValue({ top: 400, bottom: 450 } as DOMRect);
+  act(() => {
+    viewport.height = 180;
+    viewport.dispatchEvent(new Event("resize"));
+    vi.advanceTimersByTime(450);
+  });
+  expect(panel.scrollTop).toBe(384);
+});
+
+it("keeps keyboard focus inside the dialog when a control is hidden", () => {
+  render(
+    <Modal ariaLabel="Editor" isOpen onClose={() => {}}>
+      <button style={{ display: "none" }} type="button">
+        Hidden
+      </button>
+      <button type="button">First</button>
+      <button type="button">Last</button>
+    </Modal>,
+  );
+  const first = screen.getByRole("button", { name: "First" });
+  const last = screen.getByRole("button", { name: "Last" });
+  first.focus();
+  fireEvent.keyDown(first, { key: "Tab", shiftKey: true });
+  expect(last).toHaveFocus();
 });
