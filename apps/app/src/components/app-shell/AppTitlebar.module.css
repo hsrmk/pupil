@@ -183,11 +183,13 @@
   }
 }
 
-@media (max-width: 600px) {
+@media (max-width: 600px), (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
   .titlebar {
     height: auto;
     min-height: calc(58px + env(safe-area-inset-top));
-    padding: calc(var(--space-2) + env(safe-area-inset-top)) var(--space-4) var(--space-2);
+    padding: calc(var(--space-2) + env(safe-area-inset-top))
+      max(var(--space-4), env(safe-area-inset-right)) var(--space-2)
+      max(var(--space-4), env(safe-area-inset-left));
     flex-direction: row;
     align-items: center;
     background: var(--bg);
@@ -201,8 +203,8 @@
   .titlebarTabs {
     position: fixed;
     z-index: 10;
-    left: var(--space-3);
-    right: var(--space-3);
+    left: max(var(--space-3), env(safe-area-inset-left));
+    right: max(var(--space-3), env(safe-area-inset-right));
     bottom: calc(var(--space-2) + env(safe-area-inset-bottom));
     display: flex;
     flex-wrap: nowrap;
@@ -222,7 +224,7 @@
   [data-tab="import"] .mobileTabIcon { mask-size: 116%; -webkit-mask-size: 116%; }
   [data-tab="settings"] .mobileTabIcon { mask-size: 100%; -webkit-mask-size: 100%; }
   .tabLabel { display: none; }
-  .createActions { position: fixed; z-index: 9; right: var(--space-4); bottom: calc(90px + env(safe-area-inset-bottom)); }
+  .createActions { position: fixed; z-index: 9; right: max(var(--space-4), env(safe-area-inset-right)); bottom: calc(90px + env(safe-area-inset-bottom)); }
   .mobileCreateToggle, .spaceNewCard {
     min-height: 44px;
     padding: 0 var(--space-4);
@@ -240,8 +242,8 @@
   .createActionPanel {
     display: flex;
     position: fixed;
-    left: var(--space-3);
-    right: var(--space-3);
+    left: max(var(--space-3), env(safe-area-inset-left));
+    right: max(var(--space-3), env(safe-area-inset-right));
     bottom: calc(90px + env(safe-area-inset-bottom));
     flex-direction: column;
     gap: var(--space-1);
@@ -276,7 +278,7 @@
   .spaceNewCard {
     position: fixed;
     z-index: 9;
-    right: var(--space-4);
+    right: max(var(--space-4), env(safe-area-inset-right));
     bottom: calc(90px + env(safe-area-inset-bottom));
   }
 }
