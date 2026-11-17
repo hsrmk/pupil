@@ -79,10 +79,6 @@
   height: 14px;
 }
 
-.landscapeCloseButton {
-  display: none;
-}
-
 .newCardActionsBar {
   display: flex;
   align-items: center;
@@ -805,16 +801,13 @@
   }
 }
 
-@media (max-width: 640px), (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
+@media (max-width: 640px) {
   .newCardTextarea {
     font-size: 16px;
   }
 
   .cardBackdrop {
-    padding: max(var(--space-3), env(safe-area-inset-top))
-      max(var(--space-3), env(safe-area-inset-right))
-      max(var(--space-3), env(safe-area-inset-bottom))
-      max(var(--space-3), env(safe-area-inset-left));
+    padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-3) var(--space-3);
     container-type: size;
   }
 
@@ -882,35 +875,5 @@
 
   .newCardDescription {
     display: none;
-  }
-}
-
-@media (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
-  .newCardCloseButton {
-    visibility: hidden;
-  }
-
-  .landscapeCloseButton {
-    position: sticky;
-    display: flex;
-    flex-shrink: 0;
-    align-self: flex-end;
-    align-items: center;
-    justify-content: center;
-    top: var(--space-3);
-    z-index: 5;
-    width: 44px;
-    height: 44px;
-    margin-right: var(--space-3);
-    margin-bottom: -44px;
-    border: 1px solid var(--border-hover);
-    border-radius: 8px;
-    background: var(--bg-elevated);
-    color: var(--text-secondary);
-  }
-
-  .landscapeCloseButton svg {
-    width: 14px;
-    height: 14px;
   }
 }

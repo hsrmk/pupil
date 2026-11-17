@@ -20,7 +20,6 @@ type ModalProps = {
   isOpen: boolean;
   onBackdropClick?: () => void;
   onClose: () => void;
-  panelAccessory?: ReactNode;
   overlayClassName?: string;
   panelClassName?: string;
   size?: "medium" | "small" | "wide";
@@ -54,12 +53,7 @@ type ModalPhase = "opening" | "open" | "closing" | "closed";
 const PHASE_FALLBACK_MS = 400;
 
 function usesPhoneLayout(): boolean {
-  return (
-    window.innerWidth <= 640 ||
-    (typeof window.matchMedia === "function" &&
-      window.matchMedia("(max-height: 500px) and (orientation: landscape) and (pointer: coarse)")
-        .matches)
-  );
+  return window.innerWidth <= 640;
 }
 
 function revealFocusedField(panel: HTMLElement, focused: HTMLElement): void {
@@ -92,7 +86,6 @@ export function Modal({
   isOpen,
   onBackdropClick,
   onClose,
-  panelAccessory,
   overlayClassName,
   panelClassName,
   size = "small",
@@ -297,7 +290,6 @@ export function Modal({
         role="dialog"
         tabIndex={-1}
       >
-        {panelAccessory}
         {childrenRef.current}
       </div>
     </div>,

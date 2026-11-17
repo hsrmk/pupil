@@ -371,14 +371,3 @@
   }
 
 }
-
-@media (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
-  .page {
-    padding-right: max(var(--space-8), calc(env(safe-area-inset-right) + var(--space-4)));
-    padding-left: max(var(--space-8), calc(env(safe-area-inset-left) + var(--space-4)));
-  }
-
-  .study-right {
-    padding-right: 64px;
-  }
-}
