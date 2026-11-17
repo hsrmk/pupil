@@ -25,9 +25,12 @@ const INTERACTIVE_SELECTOR = [
   `[${WINDOW_DRAG_ATTRIBUTE}='false']`,
 ].join(", ");
 
-export type DesktopPlatform = "macos" | "windows" | "linux" | "unknown";
+export type DesktopPlatform = "ios" | "macos" | "windows" | "linux" | "unknown";
 
 export function detectPlatform(userAgent = navigator.userAgent): DesktopPlatform {
+  if (/iPhone|iPad|iPod/.test(userAgent)) {
+    return "ios";
+  }
   if (/Mac OS X|Macintosh/.test(userAgent)) {
     return "macos";
   }
@@ -68,7 +71,7 @@ export function installWindowChrome(): void {
   const platform = detectPlatform();
   document.documentElement.dataset.platform = platform;
 
-  if (!isTauriRuntime()) {
+  if (!isTauriRuntime() || platform === "ios") {
     return;
   }
 
