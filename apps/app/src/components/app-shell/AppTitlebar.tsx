@@ -54,6 +54,7 @@ export function AppTitlebar({
   const createActionsRef = useRef<HTMLDivElement | null>(null);
   const createToggleRef = useRef<HTMLButtonElement | null>(null);
   const createPanelRef = useRef<HTMLDivElement | null>(null);
+  const focusCreateActionRef = useRef(false);
   const createPanelId = useId();
   const tabRefs = useRef<Partial<Record<AppTabId, HTMLButtonElement>>>({});
   const [activeIndicatorStyle, setActiveIndicatorStyle] = useState<CSSProperties | null>(null);
@@ -61,7 +62,9 @@ export function AppTitlebar({
 
   useEffect(() => {
     if (!createExpanded) return;
-    createPanelRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    if (focusCreateActionRef.current) {
+      createPanelRef.current?.querySelector<HTMLButtonElement>("button")?.focus();
+    }
     function dismissOnOutside(event: PointerEvent) {
       if (!createActionsRef.current?.contains(event.target as Node)) setCreateExpanded(false);
     }
@@ -188,7 +191,10 @@ export function AppTitlebar({
             aria-hidden={createExpanded || undefined}
             aria-label={createExpanded ? "Close create menu" : "Create"}
             className={`${styles.mobileCreateToggle}${createExpanded ? ` ${styles.toggleExpanded}` : ""}`}
-            onClick={() => setCreateExpanded((expanded) => !expanded)}
+            onClick={(event) => {
+              focusCreateActionRef.current = event.detail === 0;
+              setCreateExpanded((expanded) => !expanded);
+            }}
             ref={createToggleRef}
             tabIndex={createExpanded ? -1 : undefined}
             type="button"
