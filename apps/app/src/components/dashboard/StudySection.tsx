@@ -53,6 +53,7 @@ export function StudySection({
 
         <div className="study-right">
           <Menu
+            className={styles.spacePicker}
             label="Choose a space to study"
             panelClassName={styles.spacePickerMenu}
             trigger={(props) => (

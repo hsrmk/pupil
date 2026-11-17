@@ -356,6 +356,21 @@
 }
 
 @media (max-width: 640px) {
+  .spacePicker {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .spacePickerMenu[role="menu"] {
+    right: 0;
+    left: 0;
+    min-width: 0;
+    max-width: none;
+    max-height: 40dvh;
+    overflow-y: auto;
+  }
+
   .activityRow {
     grid-template-columns: 1fr;
   }
