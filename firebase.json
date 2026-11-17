@@ -2,5 +2,10 @@
   "firestore": {
     "database": "pupil-sync",
     "location": "asia-south1"
+  },
+  "auth": {
+    "providers": {
+      "emailPassword": true
+    }
   }
 }
