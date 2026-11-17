@@ -51,6 +51,7 @@ export {
   NEW_CARDS_PRESETS,
   type NewCardsPreset,
 } from "./study-settings";
+export { compareSyncClocks, nextSyncClock, type SyncClock } from "./sync-clock";
 export type {
   CardFsrsFields,
   CardRecord,
