@@ -1,3 +1,5 @@
+mod records;
+
 use nanoid::nanoid;
 use rusqlite::{params, Connection};
 
@@ -44,3 +46,6 @@ pub(crate) fn enable_sync(connection: &mut Connection, account_uid: &str) -> App
     transaction.commit()?;
     Ok(())
 }
+
+#[allow(unused_imports)]
+pub(crate) use records::{acknowledge, pending, SyncRecord};

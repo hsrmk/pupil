@@ -61,3 +61,27 @@ fn seed_uses_existing_edit_time_and_subsequent_changes_advance_version() {
     ).unwrap();
     assert!(updated_clock > seed_clock);
 }
+
+#[test]
+fn acknowledging_a_snapshot_does_not_drop_a_newer_edit() {
+    let mut db = open_test_connection();
+    seed_space(&db, "space", "Study", TEST_NOW);
+    enable_sync(&mut db, "user-a").unwrap();
+    let snapshot = crate::sync::pending(&mut db, "user-a").unwrap();
+    assert_eq!(snapshot.len(), 1);
+    assert_eq!(snapshot[0].payload.as_ref().unwrap()["name"], "Study");
+    db.execute("UPDATE spaces SET name = 'New name' WHERE id = 'space'", [])
+        .unwrap();
+    crate::sync::acknowledge(&mut db, "user-a", &snapshot[0]).unwrap();
+    let pending = crate::sync::pending(&mut db, "user-a").unwrap();
+    assert_eq!(pending.len(), 1);
+    assert_eq!(pending[0].payload.as_ref().unwrap()["name"], "New name");
+    assert!(pending[0].logical_clock > snapshot[0].logical_clock);
+}
+
+#[test]
+fn pending_records_are_scoped_to_the_bound_account() {
+    let mut db = open_test_connection();
+    enable_sync(&mut db, "user-a").unwrap();
+    assert!(crate::sync::pending(&mut db, "user-b").is_err());
+}
