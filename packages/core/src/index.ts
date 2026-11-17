@@ -23,10 +23,13 @@ export type {
   DeleteCardInput,
   DeleteSpaceInput,
   ListCardsInput,
+  LocalSyncStatus,
   PupilStorage,
   RenameSpaceInput,
   ReviewCardInput,
   SuspendCardInput,
+  SyncRecord,
+  SyncValue,
   UndoReviewCardInput,
   UpdateCardInput,
 } from "./storage";

@@ -51,6 +51,21 @@ const RETENTION_WINDOW_MS = 30 * 24 * 60 * 60 * 1000;
  */
 export function createWebStorage(): PupilStorage {
   return {
+    async getSyncStatus() {
+      return { enabled: false, accountUid: null, pendingCount: 0 };
+    },
+    async enableSync() {
+      throw new Error("Sync requires the Pupil app.");
+    },
+    async getPendingSyncRecords() {
+      throw new Error("Sync requires the Pupil app.");
+    },
+    async acknowledgeSyncRecord() {
+      throw new Error("Sync requires the Pupil app.");
+    },
+    async applySyncRecord() {
+      throw new Error("Sync requires the Pupil app.");
+    },
     async saveCardImage(base64) {
       const binary = atob(base64);
       if (binary.length > 10 * 1024 * 1024) throw new Error("Images must be 10 MB or smaller.");

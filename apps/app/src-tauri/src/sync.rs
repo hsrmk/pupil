@@ -10,7 +10,6 @@ use crate::error::{AppError, AppResult};
 /// The binding and seed are atomic: a crash cannot leave a partially seeded
 /// collection marked as enabled. Switching accounts needs an explicit future
 /// disconnect/reset flow; silently uploading the previous user's data is unsafe.
-#[allow(dead_code)] // Used by the sync transport when it is connected.
 pub(crate) fn enable_sync(connection: &mut Connection, account_uid: &str) -> AppResult<()> {
     if account_uid.is_empty() || account_uid.len() > 128 {
         return Err(AppError::validation("Invalid sync account."));
@@ -48,7 +47,21 @@ pub(crate) fn enable_sync(connection: &mut Connection, account_uid: &str) -> App
     Ok(())
 }
 
-#[allow(unused_imports)]
 pub(crate) use apply::apply;
-#[allow(unused_imports)]
 pub(crate) use records::{acknowledge, pending, SyncRecord};
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct LocalSyncStatus {
+    enabled: bool,
+    account_uid: Option<String>,
+    pending_count: i64,
+}
+
+pub(crate) fn status(connection: &Connection) -> AppResult<LocalSyncStatus> {
+    Ok(connection.query_row(
+        "SELECT enabled, account_uid, (SELECT count(DISTINCT entity || char(0) || entity_id) FROM sync_outbox) FROM sync_control WHERE id = 1",
+        [],
+        |row| Ok(LocalSyncStatus { enabled: row.get(0)?, account_uid: row.get(1)?, pending_count: row.get(2)? }),
+    )?)
+}

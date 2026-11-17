@@ -76,6 +76,11 @@ export type DeleteSpaceInput = {
  * so scheduling has exactly one definition no matter which backend is active.
  */
 export interface PupilStorage {
+  getSyncStatus(): Promise<LocalSyncStatus>;
+  enableSync(accountUid: string): Promise<void>;
+  getPendingSyncRecords(accountUid: string): Promise<SyncRecord[]>;
+  acknowledgeSyncRecord(accountUid: string, record: SyncRecord): Promise<void>;
+  applySyncRecord(accountUid: string, record: SyncRecord): Promise<boolean>;
   saveCardImage(base64: string): Promise<string>;
   loadCardImage(id: string): Promise<string | null>;
   listSpaces(): Promise<SpaceSummary[]>;
@@ -99,3 +104,27 @@ export interface PupilStorage {
   saveStudySettings(newCardsLimit: number | null): Promise<StudySettings>;
   getStudyQueueSnapshot(): Promise<StudyQueueSnapshotData>;
 }
+
+export type SyncValue =
+  | null
+  | boolean
+  | number
+  | string
+  | SyncValue[]
+  | { [key: string]: SyncValue };
+
+export type SyncRecord = {
+  entity: string;
+  entityId: string;
+  logicalClock: number;
+  deviceId: string;
+  deleted: boolean;
+  payload: SyncValue | null;
+  sequence: number;
+};
+
+export type LocalSyncStatus = {
+  enabled: boolean;
+  accountUid: string | null;
+  pendingCount: number;
+};

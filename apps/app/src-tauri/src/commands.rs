@@ -356,3 +356,44 @@ pub(crate) fn save_study_settings(
         new_cards_today,
     })
 }
+
+#[tauri::command]
+pub(crate) fn get_sync_status(app: AppHandle) -> AppResult<crate::sync::LocalSyncStatus> {
+    crate::sync::status(&open_app_connection(&app)?)
+}
+
+#[tauri::command]
+pub(crate) fn enable_sync(app: AppHandle, account_uid: String) -> AppResult<()> {
+    crate::sync::enable_sync(&mut open_app_connection(&app)?, &account_uid)
+}
+
+#[tauri::command]
+pub(crate) fn get_pending_sync_records(
+    app: AppHandle,
+    account_uid: String,
+) -> AppResult<Vec<crate::sync::SyncRecord>> {
+    crate::sync::pending(&mut open_app_connection(&app)?, &account_uid)
+}
+
+#[tauri::command]
+pub(crate) fn acknowledge_sync_record(
+    app: AppHandle,
+    account_uid: String,
+    record: crate::sync::SyncRecord,
+) -> AppResult<()> {
+    crate::sync::acknowledge(&mut open_app_connection(&app)?, &account_uid, &record)
+}
+
+#[tauri::command]
+pub(crate) fn apply_sync_record(
+    app: AppHandle,
+    account_uid: String,
+    record: crate::sync::SyncRecord,
+) -> AppResult<bool> {
+    let connection = &mut open_app_connection(&app)?;
+    let changed = crate::sync::apply(connection, &account_uid, &record)?;
+    if changed {
+        crate::widget::publish(connection);
+    }
+    Ok(changed)
+}

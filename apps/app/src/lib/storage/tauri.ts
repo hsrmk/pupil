@@ -1,12 +1,14 @@
 import {
   type CardRecord,
   type DashboardStats,
+  type LocalSyncStatus,
   type PupilStorage,
   type RecentActivityRecord,
   type SpaceStats,
   type SpaceSummary,
   type StudyQueueSnapshotData,
   type StudySettings,
+  type SyncRecord,
   scheduleCard,
 } from "@pupil/core";
 import { invokeCommand } from "../ipc";
@@ -20,6 +22,21 @@ import { invokeCommand } from "../ipc";
  */
 export function createTauriStorage(): PupilStorage {
   return {
+    getSyncStatus() {
+      return invokeCommand<LocalSyncStatus>("get_sync_status");
+    },
+    async enableSync(accountUid) {
+      await invokeCommand("enable_sync", { accountUid });
+    },
+    getPendingSyncRecords(accountUid) {
+      return invokeCommand<SyncRecord[]>("get_pending_sync_records", { accountUid });
+    },
+    async acknowledgeSyncRecord(accountUid, record) {
+      await invokeCommand("acknowledge_sync_record", { accountUid, record });
+    },
+    applySyncRecord(accountUid, record) {
+      return invokeCommand<boolean>("apply_sync_record", { accountUid, record });
+    },
     saveCardImage(base64) {
       return invokeCommand<string>("save_card_image", { data: base64 });
     },

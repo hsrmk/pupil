@@ -39,6 +39,10 @@ use tracing_appender::non_blocking::WorkerGuard;
 use crate::app::build_app_menu;
 use crate::app::{database_path, run_migrations, BootstrapStatus};
 use crate::commands::{
+    acknowledge_sync_record, apply_sync_record, enable_sync, get_pending_sync_records,
+    get_sync_status,
+};
+use crate::commands::{
     create_card, create_space, delete_card, delete_space, export_database_copy,
     export_review_logs_csv, get_bootstrap_state, get_dashboard_stats, get_settings_data_summary,
     get_study_queue_snapshot, get_study_settings, import_anki_cards, list_cards,
@@ -169,6 +173,11 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             get_bootstrap_state,
+            get_sync_status,
+            enable_sync,
+            get_pending_sync_records,
+            acknowledge_sync_record,
+            apply_sync_record,
             save_card_image,
             load_card_image,
             list_spaces,
