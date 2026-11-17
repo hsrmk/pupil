@@ -40,6 +40,9 @@ describe("AppTitlebar navigation", () => {
     expect(toggle).toHaveAttribute("aria-expanded", "true");
     await user.keyboard("{Escape}");
     expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await user.click(toggle);
+    await user.click(screen.getByRole("button", { name: "Search" }));
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
   });
 
   it("exposes each tab by name and marks the current page", async () => {
