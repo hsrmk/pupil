@@ -67,6 +67,7 @@ export function Modal({
   panelClassName,
   size = "small",
 }: ModalProps) {
+  const overlayRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const previousActiveElementRef = useRef<HTMLElement | null>(null);
   const [phase, setPhase] = useState<ModalPhase>(isOpen ? "opening" : "closed");
@@ -118,6 +119,36 @@ export function Modal({
       if (previousActiveElementRef.current?.isConnected) {
         previousActiveElementRef.current.focus();
       }
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const viewport = window.visualViewport;
+    const overlay = overlayRef.current;
+    if (!isOpen || !viewport || !overlay) {
+      return;
+    }
+
+    const updateViewport = () => {
+      if (window.innerWidth <= 640) {
+        overlay.style.top = `${viewport.offsetTop}px`;
+        overlay.style.height = `${viewport.height}px`;
+        overlay.style.bottom = "auto";
+      } else {
+        overlay.style.removeProperty("top");
+        overlay.style.removeProperty("height");
+        overlay.style.removeProperty("bottom");
+      }
+    };
+
+    updateViewport();
+    viewport.addEventListener("resize", updateViewport);
+    viewport.addEventListener("scroll", updateViewport);
+    window.addEventListener("resize", updateViewport);
+    return () => {
+      viewport.removeEventListener("resize", updateViewport);
+      viewport.removeEventListener("scroll", updateViewport);
+      window.removeEventListener("resize", updateViewport);
     };
   }, [isOpen]);
 
@@ -184,6 +215,7 @@ export function Modal({
       data-phase={phase}
       inert={isClosing}
       onMouseDown={handleOverlayMouseDown}
+      ref={overlayRef}
       role="presentation"
     >
       <div
