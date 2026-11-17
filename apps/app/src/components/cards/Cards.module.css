@@ -502,13 +502,11 @@
 
 @media (max-width: 640px) {
   .cardListHeader,
-  .cardRowMain {
-    grid-template-columns: 1fr 70px 32px;
-  }
-
   .cardListHeader.spaceMode,
+  .cardRowMain,
   .cardRowMain.spaceMode {
-    grid-template-columns: 1fr 70px 80px 32px;
+    grid-template-columns: minmax(0, 1fr) 45px 70px 16px;
+    gap: var(--space-2);
   }
 
   .colSpace,
@@ -520,6 +518,23 @@
 
   .cardRowMain.spaceMode .cardDue {
     display: block;
+  }
+
+  .cardQa {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .cardQaText {
+    overflow-wrap: anywhere;
+  }
+
+  .cardExpandedActions {
+    flex-wrap: wrap;
+    margin-left: 0;
+  }
+
+  .actionBtn {
+    min-height: 44px;
   }
 }
 
