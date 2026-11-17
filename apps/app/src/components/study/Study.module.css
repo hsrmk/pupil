@@ -769,6 +769,42 @@
   }
 }
 
+@media (max-width: 640px) and (orientation: portrait) {
+  .sessionCard {
+    grid-template-columns: minmax(0, 1fr);
+    min-width: 0;
+  }
+
+  .sessionCardFace,
+  .sessionCardContent,
+  .sessionCardText {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .sessionCardText,
+  .sessionCardFrontEcho {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sessionCardText :global(.katex-display),
+  .sessionCardFrontEcho :global(.katex-display) {
+    width: max-content;
+    min-width: 100%;
+    overflow: visible;
+  }
+
+  .sessionCardFace.back,
+  .sessionCard.flipped .sessionCardFace.front {
+    pointer-events: none;
+  }
+
+  .sessionCard.flipped .sessionCardFace.back {
+    pointer-events: auto;
+  }
+}
+
 @media (max-width: 640px) {
   .sessionBar {
     height: calc(var(--titlebar-height) + env(safe-area-inset-top));
