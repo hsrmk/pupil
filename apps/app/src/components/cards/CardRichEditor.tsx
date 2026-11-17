@@ -271,6 +271,7 @@ export const CardRichEditor = forwardRef<CardEditorHandle, Props>(function CardR
       ref={editorRef}
       className={`${styles.editor} ${className ?? ""}`}
       contentEditable={!disabled}
+      autoCorrect={document.documentElement.dataset.platform === "ios" ? "off" : undefined}
       suppressContentEditableWarning
       role="textbox"
       tabIndex={disabled ? -1 : 0}

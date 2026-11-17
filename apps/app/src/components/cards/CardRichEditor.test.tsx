@@ -20,6 +20,18 @@ function Editor({ initial }: { initial: string }) {
 }
 
 describe("inline card editor", () => {
+  it("disables iOS autocorrection for technical card content", () => {
+    const originalPlatform = document.documentElement.dataset.platform;
+    document.documentElement.dataset.platform = "ios";
+    try {
+      render(<Editor initial="" />);
+      expect(screen.getByRole("textbox", { name: "Front" })).toHaveAttribute("autocorrect", "off");
+    } finally {
+      if (originalPlatform === undefined) delete document.documentElement.dataset.platform;
+      else document.documentElement.dataset.platform = originalPlatform;
+    }
+  });
+
   it.each(["ArrowLeft", "ArrowRight"])("opens an adjacent rendered equation with %s", (key) => {
     const ref = createRef<CardEditorHandle>();
     const value = "A $x^2$ B";
