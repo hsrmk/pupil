@@ -1,0 +1,6 @@
+{
+  "firestore": {
+    "database": "pupil-sync",
+    "location": "asia-south1"
+  }
+}
