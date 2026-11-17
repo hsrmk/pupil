@@ -1,5 +1,6 @@
 import {
   type AnimationEvent,
+  type FocusEvent,
   type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
@@ -150,7 +151,7 @@ export function Modal({
       viewport.removeEventListener("scroll", updateViewport);
       window.removeEventListener("resize", updateViewport);
     };
-  }, [isOpen]);
+  }, [isOpen, phase]);
 
   if (phase === "closed") {
     return null;
@@ -201,6 +202,27 @@ export function Modal({
     }
   }
 
+  function handlePanelFocus(event: FocusEvent<HTMLDivElement>) {
+    const panel = event.currentTarget;
+    const focused = event.target;
+    if (
+      window.innerWidth > 640 ||
+      !(focused instanceof HTMLElement) ||
+      !focused.matches('input, textarea, [contenteditable="true"]')
+    ) {
+      return;
+    }
+
+    window.setTimeout(() => {
+      if (!focused.isConnected || document.activeElement !== focused) return;
+      const fieldRect = focused.getBoundingClientRect();
+      const panelRect = panel.getBoundingClientRect();
+      if (fieldRect.bottom > panelRect.bottom || fieldRect.top < panelRect.top) {
+        panel.scrollTop += fieldRect.top - panelRect.top - 16;
+      }
+    }, 450);
+  }
+
   function handleOverlayMouseDown(event: MouseEvent<HTMLDivElement>) {
     if (isClosing || event.target !== event.currentTarget) {
       return;
@@ -225,6 +247,7 @@ export function Modal({
         aria-modal="true"
         className={`${styles.modalPanel} ${styles[`modalPanel${capitalize(size)}`]}${panelClassName ? ` ${panelClassName}` : ""}`}
         onAnimationEnd={handlePanelAnimationEnd}
+        onFocusCapture={handlePanelFocus}
         onKeyDown={handlePanelKeyDown}
         ref={panelRef}
         role="dialog"

@@ -1,10 +1,33 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
 import { afterEach, expect, it, vi } from "vitest";
 import { Modal } from "./Modal";
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
+
+it("scrolls a focused mobile field into the dialog after the keyboard appears", () => {
+  vi.useFakeTimers();
+  vi.stubGlobal("innerWidth", 390);
+
+  render(
+    <Modal ariaLabel="Editor" isOpen onClose={() => {}}>
+      <input aria-label="Back" />
+    </Modal>,
+  );
+
+  const panel = screen.getByRole("dialog", { name: "Editor" });
+  const field = screen.getByRole("textbox", { name: "Back" });
+  vi.spyOn(panel, "getBoundingClientRect").mockReturnValue({ top: 0, bottom: 300 } as DOMRect);
+  vi.spyOn(field, "getBoundingClientRect").mockReturnValue({ top: 500, bottom: 600 } as DOMRect);
+
+  act(() => {
+    field.focus();
+    vi.advanceTimersByTime(450);
+  });
+  expect(panel.scrollTop).toBe(484);
 });
 
 it("keeps a mobile dialog within the visible viewport as the keyboard opens", () => {
