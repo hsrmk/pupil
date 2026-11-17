@@ -769,10 +769,11 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
   .sessionBar {
     height: calc(var(--titlebar-height) + env(safe-area-inset-top));
-    padding: env(safe-area-inset-top) var(--space-4) 0;
+    padding: env(safe-area-inset-top) max(var(--space-4), env(safe-area-inset-right)) 0
+      max(var(--space-4), env(safe-area-inset-left));
   }
 
   .sessionExitBtn,
@@ -844,6 +845,26 @@
 
   .sessionSummaryBtn {
     justify-content: center;
+  }
+}
+
+@media (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
+  .sessionCardFace {
+    min-height: 140px;
+    padding: var(--space-12) var(--space-7) var(--space-5);
+  }
+
+  .sessionActions {
+    margin-top: var(--space-4);
+  }
+
+  .sessionRatingRow {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .sessionArea {
+    padding-right: max(var(--space-4), env(safe-area-inset-right));
+    padding-left: max(var(--space-4), env(safe-area-inset-left));
   }
 }
 
