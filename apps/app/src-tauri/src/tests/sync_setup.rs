@@ -40,3 +40,24 @@ fn another_account_cannot_take_over_a_bound_collection() {
         .unwrap();
     assert_eq!(uid, "user-a");
 }
+
+#[test]
+fn seed_uses_existing_edit_time_and_subsequent_changes_advance_version() {
+    let mut db = open_test_connection();
+    seed_space(&db, "space", "Study", TEST_NOW);
+    enable_sync(&mut db, "user-a").unwrap();
+    let (seed_clock, device): (i64, String) = db.query_row(
+        "SELECT logical_clock, device_id FROM sync_versions WHERE entity = 'spaces' AND entity_id = 'space'",
+        [],
+        |row| Ok((row.get(0)?, row.get(1)?)),
+    ).unwrap();
+    assert_eq!(seed_clock, TEST_NOW * 1000);
+    assert!(!device.is_empty());
+    db.execute("UPDATE spaces SET name = 'Changed' WHERE id = 'space'", [])
+        .unwrap();
+    let updated_clock: i64 = db.query_row(
+        "SELECT logical_clock FROM sync_versions WHERE entity = 'spaces' AND entity_id = 'space'",
+        [], |row| row.get(0),
+    ).unwrap();
+    assert!(updated_clock > seed_clock);
+}

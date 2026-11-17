@@ -1,3 +1,4 @@
+use nanoid::nanoid;
 use rusqlite::{params, Connection};
 
 use crate::error::{AppError, AppResult};
@@ -23,10 +24,14 @@ pub(crate) fn enable_sync(connection: &mut Connection, account_uid: &str) -> App
         ));
     }
     if !enabled {
+        transaction.execute(
+            "UPDATE sync_control SET device_id = COALESCE(device_id, ?1) WHERE id = 1",
+            [nanoid!(21)],
+        )?;
         transaction.execute_batch(
-            "INSERT INTO sync_outbox (entity, entity_id, deleted) SELECT 'spaces', id, 0 FROM spaces;
-             INSERT INTO sync_outbox (entity, entity_id, deleted) SELECT 'cards', id, 0 FROM cards;
-             INSERT INTO sync_outbox (entity, entity_id, deleted) SELECT 'review_logs', id, 0 FROM review_logs;
+            "INSERT INTO sync_outbox (entity, entity_id, deleted, logical_clock) SELECT 'spaces', id, 0, max(1, updated_at * 1000) FROM spaces;
+             INSERT INTO sync_outbox (entity, entity_id, deleted, logical_clock) SELECT 'cards', id, 0, max(1, updated_at * 1000) FROM cards;
+             INSERT INTO sync_outbox (entity, entity_id, deleted, logical_clock) SELECT 'review_logs', id, 0, max(1, review_time * 1000) FROM review_logs;
              INSERT INTO sync_outbox (entity, entity_id, deleted) SELECT 'study_days', json_array(space_id, day), 0 FROM study_days;
              INSERT INTO sync_outbox (entity, entity_id, deleted) SELECT 'card_images', id, 0 FROM card_images;
              INSERT INTO sync_outbox (entity, entity_id, deleted) SELECT 'settings', key, 0 FROM settings WHERE key = 'study.new_cards_limit';",

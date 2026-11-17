@@ -234,6 +234,7 @@ fn explanation_cache_migration_converts_preserves_clears_and_is_idempotent() {
             "0008_card_images",
             "0009_sync_outbox",
             "0010_sync_account",
+            "0011_sync_versions",
         ]
     );
 }

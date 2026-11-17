@@ -57,4 +57,9 @@ pub(crate) const MIGRATIONS: &[Migration] = &[
         requires_backup: false,
         action: MigrationAction::Sql(include_str!("../migrations/0010_sync_account.sql")),
     },
+    Migration {
+        id: "0011_sync_versions",
+        requires_backup: false,
+        action: MigrationAction::Sql(include_str!("../migrations/0011_sync_versions.sql")),
+    },
 ];
