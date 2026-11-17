@@ -347,6 +347,11 @@
 }
 
 @media (max-width: 640px) {
+  .study-right > button {
+    width: 100%;
+    min-height: 44px;
+  }
+
   .section-head {
     align-items: flex-start;
     flex-direction: column;

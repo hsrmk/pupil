@@ -362,6 +362,11 @@
     justify-content: center;
   }
 
+  .spacePicker > button {
+    width: 100%;
+    min-height: 44px;
+  }
+
   .spacePickerMenu[role="menu"] {
     right: 0;
     left: 0;
