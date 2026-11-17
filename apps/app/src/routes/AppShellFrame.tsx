@@ -30,6 +30,7 @@ export function AppShellFrame({
   pathname,
   tabs,
 }: AppShellFrameProps) {
+  const isStudyRoute = pathname === "/study" || /^\/spaces\/[^/]+\/study\/?$/.test(pathname);
   const errorMessage = useAppUpdateStore((state) => state.errorMessage);
   const install = useAppUpdateStore((state) => state.install);
   const notes = useAppUpdateStore((state) => state.notes);
@@ -52,10 +53,10 @@ export function AppShellFrame({
 
   return (
     <main className={shellStyles.appShell}>
-      {pathname.startsWith("/study") ? null : <RulersOverlay />}
+      {isStudyRoute ? null : <RulersOverlay />}
 
       <div className={shellStyles.dashboardShell}>
-        {activeTab || pathname.startsWith("/spaces/") ? (
+        {activeTab || (pathname.startsWith("/spaces/") && !isStudyRoute) ? (
           <AppTitlebar
             activeTab={activeTab?.id ?? "dashboard"}
             globalStreak={globalStreak}

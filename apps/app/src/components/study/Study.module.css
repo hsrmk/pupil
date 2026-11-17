@@ -792,6 +792,20 @@
     border-radius: 16px;
   }
 
+  /* Only the visible face contributes height, so a long answer cannot
+     vertically stretch a short (or shorter) prompt. */
+  .sessionCardFace.back,
+  .sessionCard.flipped .sessionCardFace.front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  .sessionCard.flipped .sessionCardFace.back {
+    position: relative;
+  }
+
   .sessionCardText {
     font-size: 18px;
   }
