@@ -501,6 +501,22 @@
 }
 
 @media (max-width: 640px) {
+  .searchRow {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .searchInput,
+  .sortSelectWrap {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .sortSelect {
+    flex: 1;
+    min-width: 0;
+  }
+
   .cardListHeader,
   .cardListHeader.spaceMode,
   .cardRowMain,
