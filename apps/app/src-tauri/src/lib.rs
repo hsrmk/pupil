@@ -12,6 +12,7 @@ mod normalize;
 mod settings;
 mod spaces;
 mod study_queue;
+mod sync;
 #[cfg(test)]
 mod tests;
 #[cfg(desktop)]

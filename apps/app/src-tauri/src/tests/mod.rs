@@ -12,3 +12,4 @@ mod tray;
 mod util;
 
 mod sync_outbox;
+mod sync_setup;
