@@ -1,3 +1,4 @@
+mod apply;
 mod records;
 
 use nanoid::nanoid;
@@ -47,5 +48,7 @@ pub(crate) fn enable_sync(connection: &mut Connection, account_uid: &str) -> App
     Ok(())
 }
 
+#[allow(unused_imports)]
+pub(crate) use apply::apply;
 #[allow(unused_imports)]
 pub(crate) use records::{acknowledge, pending, SyncRecord};

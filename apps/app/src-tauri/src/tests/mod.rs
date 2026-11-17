@@ -11,5 +11,6 @@ mod support;
 mod tray;
 mod util;
 
+mod sync_apply;
 mod sync_outbox;
 mod sync_setup;
