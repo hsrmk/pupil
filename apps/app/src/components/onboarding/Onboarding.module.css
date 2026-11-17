@@ -350,3 +350,15 @@
   border-color: var(--text-tertiary);
   color: var(--text-primary);
 }
+
+@media (max-width: 640px) {
+  .welcomePage {
+    padding-right: var(--space-5);
+    padding-bottom: calc(var(--space-6) + env(safe-area-inset-bottom));
+    padding-left: var(--space-5);
+  }
+
+  .welcomePathsGrid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
