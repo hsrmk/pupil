@@ -801,13 +801,16 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 640px), (max-height: 500px) and (orientation: landscape) and (pointer: coarse) {
   .newCardTextarea {
     font-size: 16px;
   }
 
   .cardBackdrop {
-    padding: max(var(--space-3), env(safe-area-inset-top)) var(--space-3) var(--space-3);
+    padding: max(var(--space-3), env(safe-area-inset-top))
+      max(var(--space-3), env(safe-area-inset-right))
+      max(var(--space-3), env(safe-area-inset-bottom))
+      max(var(--space-3), env(safe-area-inset-left));
     container-type: size;
   }
 

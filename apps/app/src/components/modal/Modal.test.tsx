@@ -54,3 +54,19 @@ it("keeps a mobile dialog within the visible viewport as the keyboard opens", ()
   expect(overlay?.style.height).toBe("");
   expect(overlay?.style.top).toBe("");
 });
+
+it("uses the phone viewport for a short landscape touchscreen", () => {
+  const viewport = Object.assign(new EventTarget(), { height: 220, offsetTop: 0 });
+  vi.stubGlobal("visualViewport", viewport);
+  vi.stubGlobal("innerWidth", 844);
+  vi.stubGlobal("matchMedia", () => ({ matches: true }));
+
+  render(
+    <Modal ariaLabel="Landscape dialog" isOpen onClose={() => {}}>
+      <button type="button">Done</button>
+    </Modal>,
+  );
+
+  const overlay = screen.getByRole("dialog", { name: "Landscape dialog" }).parentElement;
+  expect(overlay).toHaveStyle({ height: "220px" });
+});

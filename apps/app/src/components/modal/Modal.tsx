@@ -43,6 +43,15 @@ type ModalPhase = "opening" | "open" | "closing" | "closed";
 // Safety net in case animationend never fires (hidden window, jsdom).
 const PHASE_FALLBACK_MS = 400;
 
+function usesPhoneLayout(): boolean {
+  return (
+    window.innerWidth <= 640 ||
+    (typeof window.matchMedia === "function" &&
+      window.matchMedia("(max-height: 500px) and (orientation: landscape) and (pointer: coarse)")
+        .matches)
+  );
+}
+
 function settlePhase(phase: ModalPhase): ModalPhase {
   if (phase === "opening") {
     return "open";
@@ -131,7 +140,7 @@ export function Modal({
     }
 
     const updateViewport = () => {
-      if (window.innerWidth <= 640) {
+      if (usesPhoneLayout()) {
         overlay.style.top = `${viewport.offsetTop}px`;
         overlay.style.height = `${viewport.height}px`;
         overlay.style.bottom = "auto";
@@ -206,7 +215,7 @@ export function Modal({
     const panel = event.currentTarget;
     const focused = event.target;
     if (
-      window.innerWidth > 640 ||
+      !usesPhoneLayout() ||
       !(focused instanceof HTMLElement) ||
       !focused.matches('input, textarea, [contenteditable="true"]')
     ) {
