@@ -21,6 +21,27 @@ beforeEach(() => {
 });
 
 describe("AppTitlebar navigation", () => {
+  it("opens and dismisses the create menu", async () => {
+    const user = userEvent.setup();
+    render(
+      <AppTitlebar
+        activeTab="dashboard"
+        onOpenCreateDialog={vi.fn()}
+        onOpenNewCard={vi.fn()}
+        onOpenPalette={vi.fn()}
+        onSelectTab={vi.fn()}
+        tabs={tabs}
+      />,
+    );
+
+    const toggle = screen.getByRole("button", { name: "Create" });
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await user.click(toggle);
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await user.keyboard("{Escape}");
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+  });
+
   it("exposes each tab by name and marks the current page", async () => {
     const user = userEvent.setup();
     const onSelectTab = vi.fn();

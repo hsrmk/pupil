@@ -1,4 +1,4 @@
-import { type CSSProperties, useLayoutEffect, useRef, useState } from "react";
+import { type CSSProperties, useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "../Button";
 import { EyeLogo } from "../brand";
 import { PlusIcon } from "../icons/PlusIcon";
@@ -51,8 +51,33 @@ export function AppTitlebar({
   updateBusy = false,
 }: AppTitlebarProps) {
   const tabsRef = useRef<HTMLDivElement | null>(null);
+  const createActionsRef = useRef<HTMLDivElement | null>(null);
+  const createToggleRef = useRef<HTMLButtonElement | null>(null);
+  const createCloseRef = useRef<HTMLButtonElement | null>(null);
+  const createPanelId = useId();
   const tabRefs = useRef<Partial<Record<AppTabId, HTMLButtonElement>>>({});
   const [activeIndicatorStyle, setActiveIndicatorStyle] = useState<CSSProperties | null>(null);
+  const [createExpanded, setCreateExpanded] = useState(false);
+
+  useEffect(() => {
+    if (!createExpanded) return;
+    createCloseRef.current?.focus();
+    function dismissOnOutside(event: PointerEvent) {
+      if (!createActionsRef.current?.contains(event.target as Node)) setCreateExpanded(false);
+    }
+    function dismissOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setCreateExpanded(false);
+        createToggleRef.current?.focus();
+      }
+    }
+    document.addEventListener("pointerdown", dismissOnOutside);
+    document.addEventListener("keydown", dismissOnEscape);
+    return () => {
+      document.removeEventListener("pointerdown", dismissOnOutside);
+      document.removeEventListener("keydown", dismissOnEscape);
+    };
+  }, [createExpanded]);
 
   useLayoutEffect(() => {
     const tabsElement = tabsRef.current;
@@ -112,9 +137,13 @@ export function AppTitlebar({
             <button
               aria-current={activeTab === tab.id ? "page" : undefined}
               aria-label={tab.label}
+              data-tab={tab.id}
               className={`${styles.titlebarTab}${activeTab === tab.id ? ` ${styles.active}` : ""}`}
               key={tab.id}
-              onClick={() => onSelectTab(tab.id)}
+              onClick={() => {
+                setCreateExpanded(false);
+                onSelectTab(tab.id);
+              }}
               ref={(element) => {
                 if (element) {
                   tabRefs.current[tab.id] = element;
@@ -152,17 +181,61 @@ export function AppTitlebar({
             {globalStreak > 0 ? `${globalStreak} day streak` : "No streak yet"}
           </div>
         ) : null}
-        <div className={styles.createActions}>
-          {onOpenNewCard ? (
-            <Button onClick={onOpenNewCard} size="compact" variant="outline">
-              <PlusIcon />
-              New Card
-            </Button>
-          ) : null}
-          <Button onClick={onOpenCreateDialog} size="compact" variant="outline">
+        <div className={styles.createActions} ref={createActionsRef}>
+          <button
+            aria-controls={createPanelId}
+            aria-expanded={createExpanded}
+            aria-hidden={createExpanded || undefined}
+            aria-label={createExpanded ? "Close create menu" : "Create"}
+            className={`${styles.mobileCreateToggle}${createExpanded ? ` ${styles.toggleExpanded}` : ""}`}
+            onClick={() => setCreateExpanded((expanded) => !expanded)}
+            ref={createToggleRef}
+            tabIndex={createExpanded ? -1 : undefined}
+            type="button"
+          >
             <PlusIcon />
-            New Space
-          </Button>
+          </button>
+          <div
+            className={`${styles.createActionPanel}${createExpanded ? ` ${styles.expanded}` : ""}`}
+            id={createPanelId}
+          >
+            <button
+              aria-label="Close create menu"
+              className={styles.mobilePanelClose}
+              onClick={() => {
+                setCreateExpanded(false);
+                createToggleRef.current?.focus();
+              }}
+              ref={createCloseRef}
+              type="button"
+            >
+              ×
+            </button>
+            {onOpenNewCard ? (
+              <Button
+                onClick={() => {
+                  setCreateExpanded(false);
+                  onOpenNewCard();
+                }}
+                size="compact"
+                variant="outline"
+              >
+                <PlusIcon />
+                New Card
+              </Button>
+            ) : null}
+            <Button
+              onClick={() => {
+                setCreateExpanded(false);
+                onOpenCreateDialog();
+              }}
+              size="compact"
+              variant="outline"
+            >
+              <PlusIcon />
+              New Space
+            </Button>
+          </div>
         </div>
         <Button aria-label="Search" onClick={onOpenPalette} size="iconCompact" variant="outline">
           <SearchIcon />
